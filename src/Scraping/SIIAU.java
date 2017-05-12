@@ -160,11 +160,11 @@ public class SIIAU {
         System.out.println(listAulasEdifs.size());
         for(int i = 0; i < listAulasEdifs.size(); i++){
             String idAula = listAulasEdifs.get(i).getEdificio()+listAulasEdifs.get(i).getNumero();
-            //scraptobd.insertAula(listAulasEdifs.get(i));
+            scraptobd.insertAula(listAulasEdifs.get(i));
             for(int j = 0; j < listMaterias.size(); j++){
                 if(listAulasEdifs.get(i).getNumero().equals(listMaterias.get(j).getAula())){
                     listAulasEdifs.get(i).getListMaterias().add(listMaterias.get(j));
-                    //scraptobd.insertMateriaHorarios(listMaterias.get(j),idAula);
+                    scraptobd.insertMateriaHorarios(listMaterias.get(j),idAula);
                 }
             }
         

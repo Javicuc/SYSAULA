@@ -12,17 +12,17 @@ import java.util.List;
  *
  * @author javilubz
  */
-public class OfertaAcademica implements Serializable{
+public class ConfigOferta implements Serializable{
     private String Centro;
     private String AcronimoCentro;
     private String Ciclo;
     private String LetraCentro;
     private List<String> EdificiosCentro;
 
-    public OfertaAcademica() {
+    public ConfigOferta() {
     }
 
-    public OfertaAcademica(String Centro, String AcronimoCentro, String Ciclo, String LetraCentro, List<String> EdificiosCentro) {
+    public ConfigOferta(String Centro, String AcronimoCentro, String Ciclo, String LetraCentro, List<String> EdificiosCentro) {
         this.Centro = Centro;
         this.AcronimoCentro = AcronimoCentro;
         this.Ciclo = Ciclo;

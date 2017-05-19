@@ -5,12 +5,8 @@
  */
 package Scraping;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  *
@@ -189,20 +185,20 @@ public class ScrapMateria implements Comparator<ScrapMateria>{
     public static Comparator<ScrapMateria> MateriaNombre = new Comparator<ScrapMateria>() {
         @Override
         public int compare(ScrapMateria o1, ScrapMateria o2) {
-            String nombre1 = o1.getNombre();
-            String nombre2 = o2.getNombre();
+            String aula1 = o1.getAula();
+            String aula2 = o2.getAula();
             
-            return nombre1.compareTo(nombre2);
+            return aula1.compareTo(aula2);
         }
         
     };
 
     @Override
     public int compare(ScrapMateria o1, ScrapMateria o2) {
-        String nombre1 = o1.getNombre();
-        String nombre2 = o2.getNombre();
+        String aula1 = o1.getAula();
+        String aula2 = o2.getAula();
             
-        return nombre1.compareTo(nombre2);
+        return aula1.compareTo(aula2);
     }
 
     @Override

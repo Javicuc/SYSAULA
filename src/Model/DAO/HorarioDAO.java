@@ -25,11 +25,12 @@ import SQL.Tablas.Tabla;
 public class HorarioDAO implements iHorarioDAO{
     private Connection con;
     
-    final String INSERT = "INSERT INTO " + Tabla.HORARIO + " (" + COLHORARIO.HORA_INICIO + ", " + COLHORARIO.HORA_FINAL + ", " + COLHORARIO.DIA +") "
-            + "VALUES (?,?,?)";
+    final String INSERT = "INSERT INTO " + Tabla.HORARIO + " (" + COLHORARIO.HORA_INICIO + ", " + COLHORARIO.HORA_FINAL + ", " + COLHORARIO.DIA 
+            + ", " + COLHORARIO.FK_MATERIA + ") VALUES (?,?,?,?)";
     final String UPDATE = "UPDATE "+ Tabla.HORARIO + " SET " + COLHORARIO.HORA_INICIO + " = ?, " + COLHORARIO.HORA_FINAL + " = ?, " + COLHORARIO.DIA 
-            + " = ? WHERE " + COLHORARIO.ID_HORARIO + " = ?";
+            + " = ?, "+ COLHORARIO.FK_MATERIA + " = ? WHERE " + COLHORARIO.ID_HORARIO + " = ?";
     final String GETALL = "SELECT * FROM " + Tabla.HORARIO + " ORDER BY " + COLHORARIO.ID_HORARIO;
+    final String GETONE = "SELECT * FROM " + Tabla.HORARIO + " WHERE " + COLHORARIO.ID_HORARIO + " = ?";
     final String DELETE = "DELETE FROM " + Tabla.HORARIO + " WHERE " + COLHORARIO.ID_HORARIO + " = ?";
     final String GETALLORDERBY = "SELECT * FROM " + Tabla.HORARIO + " ORDER BY %s";
     
@@ -46,6 +47,7 @@ public class HorarioDAO implements iHorarioDAO{
             ps.setString(1, obj.getHora_Inicio());
             ps.setString(2, obj.getHora_Final());
             ps.setString(3, obj.getDia());
+            ps.setInt(4, obj.getFK_Materia());
             ps.executeUpdate();
             insertar = true;
         } catch (SQLException e) {
@@ -114,7 +116,8 @@ public class HorarioDAO implements iHorarioDAO{
             ps.setString(1, obj.getHora_Inicio());
             ps.setString(2, obj.getHora_Final());
             ps.setString(3, obj.getDia());
-            ps.setInt(4, obj.getID_Horario());
+            ps.setInt(4, obj.getFK_Materia());
+            ps.setInt(5, obj.getID_Horario());
             if(ps.executeUpdate() != 0)
                 actualizar = true;
         } catch (SQLException e) {
@@ -175,8 +178,9 @@ public class HorarioDAO implements iHorarioDAO{
             int    id  = rs.getInt("ID_Horario");
             String hri = rs.getString("Hora_Inicio");
             String hrf = rs.getString("Hora_Final");
-            String d = rs.getString("Dia");
-            horario = new Horario(id, hri, hrf, d);
+            String d   = rs.getString("Dia");
+            int    fkm = rs.getInt("FK_Materia");
+            horario = new Horario(id, hri, hrf, d, fkm);
         } catch (SQLException ex) {
             Logger.getLogger(HorarioDAO.class.getName()).log(Level.SEVERE, null, ex);
         }

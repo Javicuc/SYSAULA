@@ -20,15 +20,15 @@ public interface iUniversidadDAO {
 
     public List<Universidad> readAllForInput(String searchValue) throws SQLException;
 
-    public Universidad raadByID(int primaryKey) throws SQLException;
+    public Universidad raadByID(String primaryKey) throws SQLException;
 
     public boolean update(Universidad obj) throws SQLException;
 
     public boolean delete(Universidad obj) throws SQLException;
 
-    public boolean deleteByID(int primaryKey) throws SQLException;
+    public boolean deleteByID(String primaryKey) throws SQLException;
 
-    public boolean alreadyExisting(int primaryKey) throws SQLException;
+    public boolean alreadyExisting(String primaryKey) throws SQLException;
 
     public boolean alreadyExisting(Universidad obj) throws SQLException;
 }

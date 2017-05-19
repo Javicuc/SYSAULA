@@ -11,6 +11,7 @@ package Model;
  * @author javilubz
  */
 public class Lista_Horarios {
+    private int ID_ListaHorario;
     private String FK_Aula;
     private int    FK_Materia;
     private int    FK_Profesor;
@@ -26,9 +27,25 @@ public class Lista_Horarios {
         this.Status = Status;
     }
 
+    public Lista_Horarios(int ID_ListaHorario, String FK_Aula, int FK_Materia, int FK_Profesor, byte Status) {
+        this.ID_ListaHorario = ID_ListaHorario;
+        this.FK_Aula = FK_Aula;
+        this.FK_Materia = FK_Materia;
+        this.FK_Profesor = FK_Profesor;
+        this.Status = Status;
+    }
+
     @Override
     public String toString() {
-        return "Lista_Horarios{" + "FK_Aula=" + FK_Aula + ", FK_Materia=" + FK_Materia + ", FK_Profesor=" + FK_Profesor + ", Status=" + Status + '}';
+        return "Lista_Horarios{" + "ID_ListaHorario=" + ID_ListaHorario + ", FK_Aula=" + FK_Aula + ", FK_Materia=" + FK_Materia + ", FK_Profesor=" + FK_Profesor + ", Status=" + Status + '}';
+    }
+
+    public int getID_ListaHorario() {
+        return ID_ListaHorario;
+    }
+
+    public void setID_ListaHorario(int ID_ListaHorario) {
+        this.ID_ListaHorario = ID_ListaHorario;
     }
 
     public String getFK_Aula() {

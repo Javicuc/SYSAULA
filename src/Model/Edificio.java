@@ -26,7 +26,7 @@ public class Edificio {
 
     @Override
     public String toString() {
-        return "Edificio{" + "ID_Nombre=" + ID_Nombre + ", FK_Universidad=" + FK_Universidad + '}';
+        return ID_Nombre;
     }
 
     public String getID_Nombre() {

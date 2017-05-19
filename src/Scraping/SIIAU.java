@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Scraping;
 
 import java.io.IOException;
@@ -11,7 +6,7 @@ import static java.util.Arrays.asList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Set;;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,8 +19,8 @@ import org.jsoup.select.Elements;
  */
 public class SIIAU {
     private String  hostSIIAU = "http://consulta.siiau.udg.mx/wco/sspseca.forma_consulta";  // Host del SIIAU
-    private String  formSIIAU = "http://consulta.siiau.udg.mx/wco/sspseca.consulta_oferta"; // Consultas 
-    private String  _Ciclo;    // ciclop; 
+    private String  formSIIAU = "http://consulta.siiau.udg.mx/wco/sspseca.consulta_oferta"; // Consultas
+    private String  _Ciclo;    // ciclop;
     private String  _Centro;   // cup;
     private String  _Carrera;  // majrp;
     private String  _ClaveMat; // crsep;
@@ -37,19 +32,19 @@ public class SIIAU {
     private String  _Orden;    // ordenp;
     private String  _Mostrar;  // mostrarp;
     private int     _pStart;   // Paginacion
-  
-    private final List<String> _Dia;
+
+    //private final List<String> _Dia;
     private List<String>       _listEdificios;
-    
-    private List<ScrapAula>    listAulasEdifs; 
+
+    private List<ScrapAula>    listAulas;    // Aulas -> Materias
     private List<ScrapMateria> listMaterias; // Materias
     private List<ScrapEdif>    listHorarios; // Edificios -> Aulas -> Materias
     private ScrapToBD scraptobd;
-    
+
     public SIIAU() throws IOException {
-        this._Dia = asList("lupM", "mapT", "mipW", "jupR", "vipF", "sapS");
+        //this._Dia = asList("lupM", "mapT", "mipW", "jupR", "vipF", "sapS");
         //this._Dia = asList("lupM");
-        //this._listEdificios = asList("DEDX");
+        //this._listEdificios = asList("DEDV","DEDX","DEDT");
         this._listEdificios = asList("DEDA","DEDCS","DEDD","DEDE","DEDF","DEDG","DEDH","DEDI","DEDK","DEDL","DEDM",
                 "DEDN","DEDP","DEDQ","DEDR","DEDS","DEDT","DEDU","DEDV","DEDW","DEDX","DUCT1","DUCT2");
         this._Mostrar  = "500";
@@ -60,88 +55,106 @@ public class SIIAU {
         this.scraptobd = new ScrapToBD();
     }
     
+    public SIIAU(String centro, String ciclo) throws IOException{
+        
+    }
+    
     public void initScrap() throws IOException {
         if (getStatusConnectionCode(getHostSIIAU()) == 200) {
             for (String edif : _listEdificios) {
                 
-                ScrapEdif ded = new ScrapEdif();
                 this.setEdificio(edif);
-                ded.setNombre(edif);
+                this.listAulas = new ArrayList<>();     // Creamos una lista de aulas por cada recorrido
+                this.listMaterias = new ArrayList<>(); // Creamos una lista de materias por cada recorrido
+                
+                ScrapEdif ded = new ScrapEdif(); // Creamos un nuevo edificio por cada recorrido 
+                ded.setNombre(edif);           
                 ded.setCentro(getCentro());
-                //scraptobd.insertEdificio(ded);
+                
+                //scraptobd.insertEdificio(ded); // Insertamos el objeto edificio en la base de datos
+                
                 System.out.println(edif);
-                
-                this.listAulasEdifs = new ArrayList<>();
-                this.listMaterias   = new ArrayList<>();
-                
-                for (String dia : _Dia) {
-                    boolean isNext = true;
-                    setpStart(0);
-                    System.out.println(dia);
-                    while (isNext) {
-                        Document document = getHtmlDocument(getCiclo(), getCentro(), getEdificio(), dia,
-                                getOrden(), getMostrar(), String.valueOf(getpStart()));
-                        Element table = document.select("table").get(0);
-                        Elements rows = table.select("tr");
-                        if (rows.size() > 2) { // Si hay más datos después de las cabeceras...
-                            for (int i = 2; i < rows.size(); i++) {
-                                Element data = rows.get(i);
-                                if (data.getElementsByClass("tddatos").hasText()
-                                        && data.getElementsByClass("td1").select("td:eq(1)").hasText()) { // Si hay horario...
-                                    getAllData(data);
-                                }
+
+                boolean isNext = true;
+                setpStart(0);
+
+                while (isNext) {
+                    Document document = getHtmlDocument(getCiclo(), getCentro(), getEdificio(), // Obtenemos el documento
+                            getOrden(), getMostrar(), String.valueOf(getpStart())); // con los siguientes parametros
+                    Element table = document.select("table").get(0); // Seleccionamos la primera tabla del documento
+                    Elements rows = table.select("tr"); // Seleccionamos todas las filas 
+                    if (rows.size() > 2) { // Si hay más datos después de las cabeceras...
+                        for (int i = 2; i < rows.size(); i++) { // Iteramos despues de las cabeceras
+                            Element data = rows.get(i); // Guardamos la fila 
+                            if (data.getElementsByClass("tddatos").hasText() // Si la fila contiene datos y
+                                    && data.getElementsByClass("td1").select("td:eq(1)").hasText()) { // si hay horario...
+                                validaData(data); // Validamos la fila y extraemos la 
                             }
-                        } else {
-                            isNext = false;
                         }
-                        setpStart(this.getpStart() + 100);
+                    } else { // Si no hay más datos despues de la cabecera
+                        isNext = false;
                     }
+                    setpStart(this.getpStart() + 100); // Comprobamos si no hay segunda pagina
                 }
-                assignAulaMateria();
-                ded.setListAulas(listAulasEdifs);
-                listHorarios.add(ded);
+                
+                assignAulaMateria(); // Metodo que vincula las materias(NRC) con su respectiva aula
+                ded.setListAulas(listAulas); // Agregamos la lista de aulas al edificio
+                listHorarios.add(ded); // Agregamos a la lista de edificios
+               
+                //ScrapToBD scraptobd2 = new ScrapToBD(listAulas); // Creamos un nuevo objeto por cada recorrido
+                //Thread t = new Thread(scraptobd2); // El objeto se ejecuta en un nuevo hilo
+                //t.start(); // Inicia el hilo
+                
             }
+
         } else {
-            throw new IOException("Error al generar el documento.");
+            throw new IOException("Error al generar el documento."); // Crea una excepcion en caso de no generar documento
         }
     }
-   
-    private void getAllData(Element data){
-        if(!data.getElementsByClass("tddatos").select("td:eq(2)").text().isEmpty()){
-           
-            String asig  = data.getElementsByClass("tddatos").select("td:eq(2)").text();
-            String nrc   = data.getElementsByClass("tddatos").select("td:eq(0)").get(0).text();
-            String clave = data.getElementsByClass("tddatos").select("td:eq(1)").get(0).text();
-            
-            List<String> listHoras = getSelect(data.getElementsByClass("td1"), "td:eq(1)");
+
+    private void validaData(Element data){
+        if(!data.getElementsByClass("tddatos").select("td:eq(2)").text().isEmpty()){ // Si hay asignatura
+
+            String asig  = data.getElementsByClass("tddatos").select("td:eq(2)").text(); // Obtenemos nombre de la materia
+            String nrc   = data.getElementsByClass("tddatos").select("td:eq(0)").get(0).text(); // Obtenemos NRC
+            String clave = data.getElementsByClass("tddatos").select("td:eq(1)").get(0).text(); // Obtenemos clave
+            /* Obtenemos lista de horas, dias, edificios y aulas en las que se imparte una materia */
+            List<String> listHoras = getSelect(data.getElementsByClass("td1"), "td:eq(1)"); 
             List<String> listDias  = getSelect(data.getElementsByClass("td1"), "td:eq(2)");
             List<String> listEdifs = getSelect(data.getElementsByClass("td1"), "td:eq(3)");
-            List<String> listAulas = getSelect(data.getElementsByClass("td1"), "td:eq(4)");
-             
+            List<String> listAula  = getSelect(data.getElementsByClass("td1"), "td:eq(4)");
+            /* Iteramos la cantidad de horarios de la materia */        
             for(int i = 0; i < listHoras.size(); i++){
-                if(listEdifs.get(i).contains(getEdificio()) && !listAulas.get(i).isEmpty()){
-                    
-                    ScrapMateria materia = new ScrapMateria();
-                    ScrapAula    aula    = new ScrapAula();
-                    
+                if(listEdifs.get(i).contains(getEdificio()) && !listAula.get(i).isEmpty()){
+                    // Creamos una materia y un aula por cada recorrido
+                    ScrapMateria materia = new ScrapMateria(); 
+                    ScrapAula    aula    = new ScrapAula();   
+                    // Asignamos los datos en los objetos 
                     materia.setNRC(nrc);
                     materia.setClave(clave);
                     materia.setNombre(asig);
-                    materia.setAula(listAulas.get(i));
+                    materia.setAula(listAula.get(i));
                     materia.setDias(listDias.get(i));
                     materia.setHorario(listHoras.get(i));
-                    
                     aula.setEdificio(getEdificio());
-                    aula.setNumero(listAulas.get(i));
-                    
+                    aula.setNumero(listAula.get(i));
+                    // Agregamos la materia en cada lista
                     listMaterias.add(materia);
-                    listAulasEdifs.add(aula);
+                    listAulas.add(aula);
                 }
-            }      
+            }
         }
     }
-    
-    
+
+    /**
+    * Con este método obtenemos los datos de una respectiva selección
+    * EJM:
+    * 		Data(tddatos)   Select(td:eq(0))    3312404  
+    * 		Data(tddatos)   Select(td:eq(2))    SEGURIDAD
+    * @param daata
+    * @param select
+    * @return List<String>
+    */
     private List getSelect(Elements data,String select){
         List<String> listObj = new ArrayList<>();
         Elements obj = data.select(select);
@@ -149,28 +162,40 @@ public class SIIAU {
             listObj.add(obj.get(i).text().replaceAll("\u00a0",""));
         return listObj;
     }
-    
-    private void assignAulaMateria(){
+    /**
+    * Con este método asignamos las materias(NRC) a una respectiva aula
+    * EJM:
+    * 
+    *           Aula:   A001    Seguridad, Matematicas, Programacion 
+    *           Aula:   A023    Robotica, Algoritmia
+    */
+    private void assignAulaMateria() {
+
+        listMaterias = deleteDuplicate(listMaterias);
+        listAulas = deleteDuplicate(listAulas);
         
-        listMaterias   = deleteDuplicate(listMaterias);
-        listAulasEdifs = deleteDuplicate(listAulasEdifs);
-        Collections.sort(listAulasEdifs, new ScrapAula());
+        Collections.sort(listAulas, new ScrapAula());
         Collections.sort(listMaterias, new ScrapMateria());
+        
         System.out.println(listMaterias.size());
-        System.out.println(listAulasEdifs.size());
-        for(int i = 0; i < listAulasEdifs.size(); i++){
-            String idAula = listAulasEdifs.get(i).getEdificio()+listAulasEdifs.get(i).getNumero();
-            scraptobd.insertAula(listAulasEdifs.get(i));
-            for(int j = 0; j < listMaterias.size(); j++){
-                if(listAulasEdifs.get(i).getNumero().equals(listMaterias.get(j).getAula())){
-                    listAulasEdifs.get(i).getListMaterias().add(listMaterias.get(j));
-                    scraptobd.insertMateriaHorarios(listMaterias.get(j),idAula);
+        System.out.println(listAulas.size());
+
+        for (ScrapAula aula : listAulas) {
+            //String idAula = aula.getEdificio() + aula.getNumero();
+            scraptobd.insertAula(aula);
+            for (ScrapMateria mat : listMaterias) {
+                if (aula.getNumero().equals(mat.getAula())) {
+                    aula.getListMaterias().add(mat);
+                    //scraptobd.insertMateriaHorarios(mat, idAula);
                 }
             }
-        
         }
     }
-   
+    
+    /**
+     * Con este metodo eliminamos duplicados de una lista
+     * @return the List
+     */
     public List deleteDuplicate(List list){
         Set linkedHashSet = new LinkedHashSet<>();
 		linkedHashSet.addAll(list);
@@ -178,22 +203,35 @@ public class SIIAU {
         list.addAll(linkedHashSet);
         return list;
     }
+
     
-    private Document getHtmlDocument(String ciclo, String centro, String edificio, String dia, String orden, String mostrar, String pStart) 
+    /**
+    * Con este método obtenemos un documento(JSOUP)
+    * EJM:
+    *           connect: http://consulta.siiau.udg.mx/wco/sspseca.consulta_oferta
+    *           data:    ?ciclop=201710&cup=D&edifp=DEDX&ordenp=0&mostrarp=500&p_start=0	  
+    * @param ciclo
+    * @param centro
+    * @param edificio
+    * @param orden
+    * @param mostrar
+    * @param pStart
+    * @return Document
+    */
+    private Document getHtmlDocument(String ciclo, String centro, String edificio, String orden, String mostrar, String pStart)
             throws IOException{
-        
+
         Document document;
-        
-        document = Jsoup.connect(formSIIAU).data("ciclop",ciclo).data("cup",centro)
-                .data(dia.substring(0,3),dia.substring(3,4)).data("edifp",edificio)
+
+        document = Jsoup.connect(formSIIAU).data("ciclop",ciclo).data("cup",centro).data("edifp",edificio)
                 .data("ordenp",orden).data("mostrarp",mostrar).data("p_start", pStart).post();
-        
+
         if(!document.hasText())
             throw new IOException("Error al obtener documento.");
         return document;
-    
+
     }
-    
+
     /**
     * Con esta método compruebo el Status code de la respuesta que recibo al hacer la petición
     * EJM:
@@ -213,10 +251,10 @@ public class SIIAU {
             return response.statusCode();
         } catch (IOException ex) {
             System.out.println("Excepción al obtener el Status Code: " + ex.getMessage());
-            return 0; 
+            return 0;
         }
     }
-    
+
     /**
      * @return the hostSIIAU
      */
@@ -409,12 +447,12 @@ public class SIIAU {
         this._listEdificios = _listEdificios;
     }
 
-    public List<ScrapAula> getListAulasEdifs() {
-        return listAulasEdifs;
+    public List<ScrapAula> getListAulas() {
+        return listAulas;
     }
 
-    public void setListAulasEdifs(List<ScrapAula> listAulasEdifs) {
-        this.listAulasEdifs = listAulasEdifs;
+    public void setListAulas(List<ScrapAula> listAulas) {
+        this.listAulas = listAulas;
     }
 
     public List<ScrapMateria> getListMaterias() {
@@ -432,7 +470,7 @@ public class SIIAU {
     public void setListHorarios(List<ScrapEdif> listHorarios) {
         this.listHorarios = listHorarios;
     }
-    
-    
-    
+
+
+
 }

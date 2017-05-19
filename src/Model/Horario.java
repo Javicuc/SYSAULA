@@ -14,24 +14,32 @@ import java.util.Objects;
  */
 public class Horario {
     
-    private int ID_Horario;
+    private int    ID_Horario;
     private String Hora_Inicio;
     private String Hora_Final;
     private String Dia;
+    private int FK_Materia;
     
     public Horario(){
         
     }
-    public Horario(String hri, String hrf, String d){
+    public Horario(String hri, String hrf, String d, int fkm){
         this.Hora_Inicio = hri;
         this.Hora_Final  = hrf;
         this.Dia         = d;
+        this.FK_Materia  = fkm;
     }
-    public Horario(int id, String hri, String hrf, String d){
+    public Horario(int id, String hri, String hrf, String d, int fkm){
         this.ID_Horario  = id;
         this.Hora_Inicio = hri;
         this.Hora_Final  = hrf;
         this.Dia         = d;
+        this.FK_Materia  = fkm;
+    }
+
+    @Override
+    public String toString() {
+        return "Horario{" + "ID_Horario=" + ID_Horario + ", Hora_Inicio=" + Hora_Inicio + ", Hora_Final=" + Hora_Final + ", Dia=" + Dia + ", FK_Materia=" + FK_Materia + '}';
     }
 
     /**
@@ -90,17 +98,22 @@ public class Horario {
         this.Dia = Dia;
     }
 
-    @Override
-    public String toString() {
-        return "Horario{" + "ID_Horario=" + ID_Horario + ", Hora_Inicio=" + Hora_Inicio + ", Hora_Final=" + Hora_Final + ", Dia=" + Dia + '}';
+    public int getFK_Materia() {
+        return FK_Materia;
+    }
+
+    public void setFK_Materia(int FK_Materia) {
+        this.FK_Materia = FK_Materia;
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 17 * hash + Objects.hashCode(this.Hora_Inicio);
-        hash = 17 * hash + Objects.hashCode(this.Hora_Final);
-        hash = 17 * hash + Objects.hashCode(this.Dia);
+        hash = 29 * hash + this.ID_Horario;
+        hash = 29 * hash + Objects.hashCode(this.Hora_Inicio);
+        hash = 29 * hash + Objects.hashCode(this.Hora_Final);
+        hash = 29 * hash + Objects.hashCode(this.Dia);
+        hash = 29 * hash + this.FK_Materia;
         return hash;
     }
 
@@ -116,6 +129,12 @@ public class Horario {
             return false;
         }
         final Horario other = (Horario) obj;
+        if (this.ID_Horario != other.ID_Horario) {
+            return false;
+        }
+        if (this.FK_Materia != other.FK_Materia) {
+            return false;
+        }
         if (!Objects.equals(this.Hora_Inicio, other.Hora_Inicio)) {
             return false;
         }
@@ -127,6 +146,7 @@ public class Horario {
         }
         return true;
     }
+    
     
     
 }

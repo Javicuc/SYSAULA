@@ -37,10 +37,11 @@ public class Tablas {
         String HORA_INICIO = "Hora_Inicio";
         String HORA_FINAL  = "Hora_Final";
         String DIA         = "Dia";
+        String FK_MATERIA  = "FK_Materia";
     }
     interface ColumnasMateria{
         String ID_NRC = "ID_NRC";
-        String Clave  = "Clave";
+        String CLAVE  = "Clave";
         String NOMBRE = "Nombre";
     }
     interface ColumnasProfesor{
@@ -58,6 +59,7 @@ public class Tablas {
         String FK_HORARIO = "FK_Horario";
     }
     interface ColumnasListaHorarios{
+        String ID_LISTAHORARIO = "ID_ListaHorario";
         String FK_AULA      = "FK_Aula";
         String FK_MATERIA   = "FK_Materia";
         String FK_PROFESOR  = "FK_Profesor";

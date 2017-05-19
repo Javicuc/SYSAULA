@@ -20,15 +20,15 @@ public interface iEdificioDAO {
 
     public List<Edificio> readAllForInput(String searchValue) throws SQLException;
 
-    public Edificio raadByID(int primaryKey) throws SQLException;
+    public Edificio raadByID(String primaryKey) throws SQLException;
 
     public boolean update(Edificio obj) throws SQLException;
 
     public boolean delete(Edificio obj) throws SQLException;
 
-    public boolean deleteByID(int primaryKey) throws SQLException;
+    public boolean deleteByID(String primaryKey) throws SQLException;
 
-    public boolean alreadyExisting(int primaryKey) throws SQLException;
+    public boolean alreadyExisting(String primaryKey) throws SQLException;
 
     public boolean alreadyExisting(Edificio obj) throws SQLException;
 }

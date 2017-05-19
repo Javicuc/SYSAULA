@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 import SQL.Tablas.COLAULA;
 import SQL.Tablas.Tabla;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
@@ -28,6 +29,8 @@ public class AulaDAO implements iAulaDAO{
     final String INSERT = "INSERT INTO " + Tabla.AULA + " (" + COLAULA.ID_AULA + ", " + COLAULA.NUMERO + ", " + COLAULA.FK_EDIFICIO +") VALUES (?,?,?)";
     final String UPDATE = "UPDATE " + Tabla.AULA + " SET " + COLAULA.NUMERO + " = ?, " + COLAULA.FK_EDIFICIO + " = ? WHERE " + COLAULA.ID_AULA + " = ?";
     final String GETALL = "SELECT * FROM " + Tabla.AULA + " ORDER BY " + COLAULA.NUMERO;
+    final String GETBYEDIF = "SELECT * FROM " + Tabla.AULA + " WHERE " + COLAULA.FK_EDIFICIO + " = ?";
+    final String GETONE = "SELECT * FROM " + Tabla.AULA + " WHERE " + COLAULA.ID_AULA + " = ?";
     final String DELETE = "DELETE FROM " + Tabla.AULA + " WHERE " + COLAULA.ID_AULA + " = ?";
     final String GETALLORDERBY = "SELECT * FROM " + Tabla.AULA + " ORDER BY %s";
     
@@ -62,7 +65,7 @@ public class AulaDAO implements iAulaDAO{
 
     @Override
     public List<Aula> readAll() throws SQLException {
-        List<Aula> list = null;
+        List<Aula> list = new ArrayList<>();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try{
@@ -95,22 +98,116 @@ public class AulaDAO implements iAulaDAO{
 
     @Override
     public List<Aula> readAllForInput(String searchValue) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Aula> list = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try{
+            ps = con.prepareStatement(GETBYEDIF);
+            ps.setString(1, searchValue);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                Aula a = convertirRS(rs);
+                list.add(a);
+            }
+        }catch(SQLException e){
+            throw new SQLException(e);
+        }finally{
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new SQLException(e);
+                }
+            }
+            if(rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new SQLException(e);
+                }    
+            }
+        }
+        return list;
     }
 
     @Override
     public Aula raadByID(String primaryKey) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Aula obj = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = con.prepareStatement(GETONE);
+            ps.setString(1, primaryKey);
+            rs = ps.executeQuery();
+            while (rs.next()) 
+                obj = convertirRS(rs);
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        } finally {
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new SQLException(e);
+                }
+            }
+            if(rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new SQLException(e);
+                }    
+            }
+        }
+        return obj;
     }
 
     @Override
     public boolean update(Aula obj) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        boolean actualizar = false;
+        PreparedStatement ps = null;
+        try {
+            ps = con.prepareStatement(UPDATE);
+            ps.setString(1, obj.getNumero());
+            ps.setString(2, obj.getFK_Edificio());
+            ps.setString(3, obj.getID_Aula());
+            ps.executeUpdate();
+            actualizar = true;
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        } finally {
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch(SQLException e) {
+                    throw new SQLException(e);
+                }
+            }
+        }
+        return actualizar;
     }
 
     @Override
     public boolean delete(Aula obj) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        boolean eliminar = false;
+        PreparedStatement ps = null;
+        try {
+            ps = con.prepareStatement(DELETE);
+            ps.setString(1, obj.getID_Aula());
+            if(ps.executeUpdate() != 0)
+                eliminar = true;
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        } finally {
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch(SQLException e) {
+                    throw new SQLException(e);
+                }
+            }
+        }
+        return eliminar;
     }
 
     @Override

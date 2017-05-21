@@ -1,0 +1,28 @@
+Copiar la carpeta y las dos librerias
+a la carpeta raiz del proyecto Sysaula.
+
+Una vez copiado los .jar, entramos a netbeans
+y cargamos el proyecto.
+
+Clic derecho sobre el nombre del proyecto
+Seleccionamos Resolve Problems
+
+Aparece "JasperSysAula" library could not be found
+Seleccionamos y damos clic en Resolve
+
+Clic en New Library:
+  Nombramos la nueva libreria como JasperSysAula   (Se tiene que respetar minusculas y mayusculas)
+  clic en OK
+
+Clic en Add JAR/Folder
+  Seleccionamos la carpeta raiz de nuestro proyecto y entramos a "Librerias"
+  Agregamos primero la libreria jasperreports-javaflow-4.0.2.jar
+  Clic de nuevo en Add Jar y agregamos la libreria jasperreport-4.0.2.jar y la agregamos
+  Clic de nuevo en Add Jar/Library y ahora agregamos el resto de librerias
+
+  Nota* Es importante agregar las dos primeras librerias en ese orden, el resto las puedes agregar todas juntas.
+
+  Ya agregadas las lubrerias damos clic en ok, y estara listo el proyecto.
+
+  Despues podemos configurar nuestra clase BD_Conexion.java (Dentro del paquete SQL) y agregar nuestros parametros
+  para entrar a la BD local.

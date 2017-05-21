@@ -44,9 +44,9 @@ static Connection conex;
     }
 
     private void performConnection() throws ClassNotFoundException {
-        String host = "127.0.0.1";//host de la base de datos
+        String host = "localhost";//host de la base de datos
         String user = "root";//usuario de la base de datos
-        String pass = "5151";//contraseña de la base de datos
+        String pass = "23011997";//contraseña de la base de datos
         String dtbs = "sysaulaBD";//nombre de la base de datos
         int    port = 3306;
  

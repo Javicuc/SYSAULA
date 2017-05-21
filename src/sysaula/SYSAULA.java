@@ -15,26 +15,23 @@ import java.util.logging.Logger;
  */
 public class SYSAULA {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, SQLException {
         
-        try {
-            new MainView();
+        /*try {
+            MainView mainView = new MainView();*/
             
-            /*
             SIIAU scrap = new SIIAU();
             try {
             scrap.initScrap();
             } catch (IOException ex) {
             Logger.getLogger(SYSAULA.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
+            }/*
             scrap.getListHorarios()
             .stream().forEach((e) -> {
             System.out.println(e);
-            });
-            */
-        } catch (SQLException ex) {
+            });*/
+        /*} catch (SQLException ex) {
             Logger.getLogger(SYSAULA.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     }
 }

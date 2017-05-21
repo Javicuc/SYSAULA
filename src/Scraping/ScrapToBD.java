@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package Scraping;
-
+import com.opencsv.CSVWriter;
 import SQL.BD_Conexion;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import Scraping.ScrapAula;
 import Scraping.ScrapEdif;
 import Scraping.ScrapMateria;
+import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,6 +49,12 @@ public class ScrapToBD implements Runnable{
             Logger.getLogger(ScrapToBD.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    void insertEdificioCSV(ScrapEdif obj,CSVWriter writer){
+       
+            String[] edificio = {obj.getNombre(),obj.getCentro()};        
+            writer.writeNext(edificio);
+    }
+        
     public void insertAula(ScrapAula obj){
         try {
             CallableStatement cst = con.prepareCall(paInsertAula);
@@ -59,6 +66,11 @@ public class ScrapToBD implements Runnable{
             Logger.getLogger(ScrapToBD.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    public void insertAulaCsv(ScrapAula obj,CSVWriter writer){
+        String[] aula = {obj.getEdificio()+obj.getNumero(),obj.getNumero(),obj.getEdificio()}; 
+        writer.writeNext(aula);
+    }
+    
     public void insertMateriaHorarios(ScrapMateria obj, String id){
         try {
             CallableStatement cst = con.prepareCall(paInsertMateriaHorarios);
@@ -73,6 +85,14 @@ public class ScrapToBD implements Runnable{
         } catch (SQLException ex) {
             Logger.getLogger(ScrapToBD.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    public void insertMateriaHorariosCsv(ScrapMateria obj,CSVWriter Materia,CSVWriter Horario,CSVWriter Lhorario, String id ){
+        String[] materia_ = {obj.getNRC(),obj.getClave(),obj.getNombre()};
+        String[] horario_ = {null,obj.getHora_Inicio(),obj.getHora_Fin(),obj.getDias(),obj.getNRC()};
+        String[] lhorario_ = {null,id,obj.getNRC(),null,"0"};
+        Materia.writeNext(materia_);
+        Horario.writeNext(horario_);
+        Lhorario.writeNext(lhorario_);
     }
     public void insertMaterias(ScrapMateria obj){
         try {
@@ -129,7 +149,36 @@ public class ScrapToBD implements Runnable{
                 cst.close();
         }
     }
-
+    public void Tabla_aula(String url) throws SQLException{
+        PreparedStatement consulta;
+        consulta = con.prepareStatement("LOAD DATA LOCAL INFILE '"+url+"' IGNORE INTO TABLE aula FIELDS TERMINATED BY ',' "
+                    + "OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\\n'");
+        consulta.executeQuery();
+    }
+    public void Tabla_edificio(String url) throws SQLException{
+        PreparedStatement consulta;
+        consulta = con.prepareStatement("LOAD DATA LOCAL INFILE '"+url+"' INTO TABLE edificio FIELDS TERMINATED BY ',' "
+                    + "OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\\n'");
+        consulta.executeQuery();
+    }
+    public void Tabla_materia(String url) throws SQLException{
+        PreparedStatement consulta;
+        consulta = con.prepareStatement("LOAD DATA LOCAL INFILE '"+url+"' IGNORE INTO TABLE materia FIELDS TERMINATED BY ',' "
+                    + "OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\\n'");
+        consulta.executeQuery();
+    }
+    public void Tabla_horario(String url) throws SQLException{
+        PreparedStatement consulta;
+        consulta = con.prepareStatement("LOAD DATA LOCAL INFILE '"+url+"' IGNORE INTO TABLE horario FIELDS TERMINATED BY ',' "
+                    + "OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\\n'");
+        consulta.executeQuery();
+    }
+    public void Tabla_lhorario(String url) throws SQLException{
+        PreparedStatement consulta;
+        consulta = con.prepareStatement("LOAD DATA LOCAL INFILE '"+url+"' IGNORE INTO TABLE Lista_Horarios FIELDS TERMINATED BY ',' "
+                    + "OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\\n'");
+        consulta.executeQuery();
+    }
     @Override
     public void run() {
         try {

@@ -91,8 +91,8 @@ public class ScrapAula implements Comparator<ScrapAula>{
     public static Comparator<ScrapAula> AulaNumero = new Comparator<ScrapAula>() {
         @Override
         public int compare(ScrapAula aula1, ScrapAula aula2) {
-            String aulax1 = aula1.getNumero();
-            String aulax2 = aula2.getNumero();
+            String aulax1 = aula1.getNumero()+aula1.getEdificio();
+            String aulax2 = aula2.getNumero()+aula2.getEdificio();
             
             return aulax1.compareTo(aulax2);
         }
@@ -100,8 +100,8 @@ public class ScrapAula implements Comparator<ScrapAula>{
 
     @Override
     public int compare(ScrapAula o1, ScrapAula o2) {
-        String aulax1 = o1.getNumero();
-        String aulax2 = o2.getNumero();
+        String aulax1 = o1.getNumero()+o1.getEdificio();
+        String aulax2 = o2.getNumero()+o2.getEdificio();
             
         return aulax1.compareTo(aulax2);
     }

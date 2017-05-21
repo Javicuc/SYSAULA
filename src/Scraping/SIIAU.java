@@ -126,12 +126,12 @@ public class SIIAU {
             csvMateria.close();
             csvHorario.close();
             csvlhorario.close();
-            //Obtener el path
-            /*scraptobd.Tabla_edificio(new File("Edificio.csv").getAbsolutePath().replace('\\', '/'));
+            //llenar la base de datos
+            scraptobd.Tabla_edificio(new File("Edificio.csv").getAbsolutePath().replace('\\', '/'));
             scraptobd.Tabla_aula(new File("Aula.csv").getAbsolutePath().replace('\\', '/'));
             scraptobd.Tabla_materia(new File("Materia.csv").getAbsolutePath().replace('\\', '/'));
             scraptobd.Tabla_horario(new File("Horario.csv").getAbsolutePath().replace('\\', '/'));
-            scraptobd.Tabla_lhorario(new File("LHorario.csv").getAbsolutePath().replace('\\', '/'));  */     
+            scraptobd.Tabla_lhorario(new File("LHorario.csv").getAbsolutePath().replace('\\', '/'));  
         } else {
             throw new IOException("Error al generar el documento."); // Crea una excepcion en caso de no generar documento
         }

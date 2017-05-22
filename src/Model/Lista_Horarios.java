@@ -14,31 +14,30 @@ public class Lista_Horarios {
     private int ID_ListaHorario;
     private String FK_Aula;
     private int    FK_Materia;
-    private int    FK_Profesor;
-    private byte   Status;
+    private boolean   Status;
 
     public Lista_Horarios() {
     }
 
-    public Lista_Horarios(String FK_Aula, int FK_Materia, int FK_Profesor, byte Status) {
+    public Lista_Horarios(String FK_Aula, int FK_Materia, boolean Status) {
         this.FK_Aula = FK_Aula;
         this.FK_Materia = FK_Materia;
-        this.FK_Profesor = FK_Profesor;
         this.Status = Status;
     }
 
-    public Lista_Horarios(int ID_ListaHorario, String FK_Aula, int FK_Materia, int FK_Profesor, byte Status) {
+    public Lista_Horarios(int ID_ListaHorario, String FK_Aula, int FK_Materia, boolean Status) {
         this.ID_ListaHorario = ID_ListaHorario;
         this.FK_Aula = FK_Aula;
         this.FK_Materia = FK_Materia;
-        this.FK_Profesor = FK_Profesor;
         this.Status = Status;
     }
 
     @Override
     public String toString() {
-        return "Lista_Horarios{" + "ID_ListaHorario=" + ID_ListaHorario + ", FK_Aula=" + FK_Aula + ", FK_Materia=" + FK_Materia + ", FK_Profesor=" + FK_Profesor + ", Status=" + Status + '}';
+        return "Lista_Horarios{" + "ID_ListaHorario=" + ID_ListaHorario + ", FK_Aula=" + FK_Aula + ", FK_Materia=" + FK_Materia + ", Status=" + Status + '}';
     }
+
+    
 
     public int getID_ListaHorario() {
         return ID_ListaHorario;
@@ -64,19 +63,11 @@ public class Lista_Horarios {
         this.FK_Materia = FK_Materia;
     }
 
-    public int getFK_Profesor() {
-        return FK_Profesor;
-    }
-
-    public void setFK_Profesor(int FK_Profesor) {
-        this.FK_Profesor = FK_Profesor;
-    }
-
-    public byte getStatus() {
+    public boolean getStatus() {
         return Status;
     }
 
-    public void setStatus(byte Status) {
+    public void setStatus(boolean Status) {
         this.Status = Status;
     }
 

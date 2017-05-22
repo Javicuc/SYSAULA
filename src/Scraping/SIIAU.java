@@ -1,6 +1,10 @@
 package Scraping;
 
+import com.opencsv.CSVWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import static java.util.Arrays.asList;
 import java.util.Collections;
@@ -18,8 +22,6 @@ import org.jsoup.select.Elements;
  * @author Javicuc
  */
 public class SIIAU {
-    private String  hostSIIAU = "http://consulta.siiau.udg.mx/wco/sspseca.forma_consulta";  // Host del SIIAU
-    private String  formSIIAU = "http://consulta.siiau.udg.mx/wco/sspseca.consulta_oferta"; // Consultas
     private String  _Ciclo;    // ciclop;
     private String  _Centro;   // cup;
     private String  _Carrera;  // majrp;
@@ -33,7 +35,6 @@ public class SIIAU {
     private String  _Mostrar;  // mostrarp;
     private int     _pStart;   // Paginacion
 
-    //private final List<String> _Dia;
     private List<String>       _listEdificios;
 
     private List<ScrapAula>    listAulas;    // Aulas -> Materias
@@ -42,9 +43,6 @@ public class SIIAU {
     private ScrapToBD scraptobd;
 
     public SIIAU() throws IOException {
-        //this._Dia = asList("lupM", "mapT", "mipW", "jupR", "vipF", "sapS");
-        //this._Dia = asList("lupM");
-        //this._listEdificios = asList("DEDV","DEDX","DEDT");
         this._listEdificios = asList("DEDA","DEDCS","DEDD","DEDE","DEDF","DEDG","DEDH","DEDI","DEDK","DEDL","DEDM",
                 "DEDN","DEDP","DEDQ","DEDR","DEDS","DEDT","DEDU","DEDV","DEDW","DEDX","DUCT1","DUCT2");
         this._Mostrar  = "500";
@@ -54,24 +52,39 @@ public class SIIAU {
         this.listHorarios   = new ArrayList<>();
         this.scraptobd = new ScrapToBD();
     }
-    
-    public SIIAU(String centro, String ciclo) throws IOException{
-        
+
+    public SIIAU(String _Ciclo, String _Centro, String _Orden, String _Mostrar, List<String> _listEdificios) {
+        this._Ciclo = _Ciclo;
+        this._Centro = _Centro;
+        this._Orden = _Orden;
+        this._Mostrar = _Mostrar;
+        this._listEdificios = _listEdificios;
+        this.listHorarios   = new ArrayList<>();
+        this.scraptobd = new ScrapToBD();
     }
     
-    public void initScrap() throws IOException {
-        if (getStatusConnectionCode(getHostSIIAU()) == 200) {
+    
+    
+    public void scrapSIIAU() throws IOException, SQLException {
+        ScrapHelper helper = new ScrapHelper();
+        if (helper.getStatusConnectionCode(helper.getHostSIIAU()) == 200) {
+
+            CSVWriter csvEdificio = new CSVWriter(new FileWriter("csv/Edificio.csv"), ',');
+            CSVWriter csvAula = new CSVWriter(new FileWriter("csv/Aula.csv"), ',');
+            CSVWriter csvMateria = new CSVWriter(new FileWriter("csv/Materia.csv"), ',');
+            CSVWriter csvHorario = new CSVWriter(new FileWriter("csv/Horario.csv"), ',');
+            CSVWriter csvlhorario = new CSVWriter(new FileWriter("csv/LHorario.csv"), ',');
+
             for (String edif : _listEdificios) {
-                
+
                 this.setEdificio(edif);
                 this.listAulas = new ArrayList<>();     // Creamos una lista de aulas por cada recorrido
                 this.listMaterias = new ArrayList<>(); // Creamos una lista de materias por cada recorrido
-                
+
                 ScrapEdif ded = new ScrapEdif(); // Creamos un nuevo edificio por cada recorrido 
-                ded.setNombre(edif);           
+                ded.setNombre(edif);
                 ded.setCentro(getCentro());
-                
-                //scraptobd.insertEdificio(ded); // Insertamos el objeto edificio en la base de datos
+                scraptobd.insertEdificioCSV(ded, csvEdificio); // Insertamos el edificio en archivo
                 
                 System.out.println(edif);
 
@@ -79,7 +92,7 @@ public class SIIAU {
                 setpStart(0);
 
                 while (isNext) {
-                    Document document = getHtmlDocument(getCiclo(), getCentro(), getEdificio(), // Obtenemos el documento
+                    Document document = helper.getHtmlDocument(getCiclo(), getCentro(), getEdificio(), // Obtenemos el documento
                             getOrden(), getMostrar(), String.valueOf(getpStart())); // con los siguientes parametros
                     Element table = document.select("table").get(0); // Seleccionamos la primera tabla del documento
                     Elements rows = table.select("tr"); // Seleccionamos todas las filas 
@@ -96,17 +109,23 @@ public class SIIAU {
                     }
                     setpStart(this.getpStart() + 100); // Comprobamos si no hay segunda pagina
                 }
-                
-                assignAulaMateria(); // Metodo que vincula las materias(NRC) con su respectiva aula
+                // Metodo que vincula las materias(NRC) con su respectiva aula
+                assignAulaMateria(csvAula, csvMateria, csvHorario, csvlhorario); 
                 ded.setListAulas(listAulas); // Agregamos la lista de aulas al edificio
-                listHorarios.add(ded); // Agregamos a la lista de edificios
-               
-                //ScrapToBD scraptobd2 = new ScrapToBD(listAulas); // Creamos un nuevo objeto por cada recorrido
-                //Thread t = new Thread(scraptobd2); // El objeto se ejecuta en un nuevo hilo
-                //t.start(); // Inicia el hilo
-                
+                listHorarios.add(ded); // Agregamos a la lista de edificios  
             }
-
+            // Cerramos los archivos
+            csvEdificio.close();
+            csvAula.close();
+            csvMateria.close();
+            csvHorario.close();
+            csvlhorario.close();
+            // Volcado de la base de datos
+            scraptobd.Tabla_edificio(new File("csv/Edificio.csv").getAbsolutePath().replace('\\', '/'));
+            scraptobd.Tabla_aula(new File("csv/Aula.csv").getAbsolutePath().replace('\\', '/'));
+            scraptobd.Tabla_materia(new File("csv/Materia.csv").getAbsolutePath().replace('\\', '/'));
+            scraptobd.Tabla_horario(new File("csv/Horario.csv").getAbsolutePath().replace('\\', '/'));
+            scraptobd.Tabla_lhorario(new File("csv/LHorario.csv").getAbsolutePath().replace('\\', '/'));
         } else {
             throw new IOException("Error al generar el documento."); // Crea una excepcion en caso de no generar documento
         }
@@ -125,6 +144,7 @@ public class SIIAU {
             List<String> listAula  = getSelect(data.getElementsByClass("td1"), "td:eq(4)");
             /* Iteramos la cantidad de horarios de la materia */        
             for(int i = 0; i < listHoras.size(); i++){
+                // Si el horario pertenece al edificio actual y el aula no esta vacia
                 if(listEdifs.get(i).contains(getEdificio()) && !listAula.get(i).isEmpty()){
                     // Creamos una materia y un aula por cada recorrido
                     ScrapMateria materia = new ScrapMateria(); 
@@ -162,14 +182,16 @@ public class SIIAU {
             listObj.add(obj.get(i).text().replaceAll("\u00a0",""));
         return listObj;
     }
+    
     /**
     * Con este método asignamos las materias(NRC) a una respectiva aula
+    * y se ingresa a su respectivo archivo csv
     * EJM:
     * 
     *           Aula:   A001    Seguridad, Matematicas, Programacion 
     *           Aula:   A023    Robotica, Algoritmia
     */
-    private void assignAulaMateria() {
+    private void assignAulaMateria(CSVWriter csvAula,CSVWriter csvMateria,CSVWriter csvHorario,CSVWriter csvLhorario) {
 
         listMaterias = deleteDuplicate(listMaterias);
         listAulas = deleteDuplicate(listAulas);
@@ -181,12 +203,12 @@ public class SIIAU {
         System.out.println(listAulas.size());
 
         for (ScrapAula aula : listAulas) {
-            //String idAula = aula.getEdificio() + aula.getNumero();
-            scraptobd.insertAula(aula);
+            scraptobd.insertAulaCsv(aula, csvAula); // Insertamos en archivo el aula recorrida
             for (ScrapMateria mat : listMaterias) {
                 if (aula.getNumero().equals(mat.getAula())) {
-                    aula.getListMaterias().add(mat);
-                    //scraptobd.insertMateriaHorarios(mat, idAula);
+                    aula.getListMaterias().add(mat); // Agregamos a un aula la lista de materias
+                    // Insertamos en archivo la materia
+                    scraptobd.insertMateriaHorariosCsv(mat, csvMateria, csvHorario, csvLhorario, aula.getEdificio() + aula.getNumero());
                 }
             }
         }
@@ -203,72 +225,7 @@ public class SIIAU {
         list.addAll(linkedHashSet);
         return list;
     }
-
-    
-    /**
-    * Con este método obtenemos un documento(JSOUP)
-    * EJM:
-    *           connect: http://consulta.siiau.udg.mx/wco/sspseca.consulta_oferta
-    *           data:    ?ciclop=201710&cup=D&edifp=DEDX&ordenp=0&mostrarp=500&p_start=0	  
-    * @param ciclo
-    * @param centro
-    * @param edificio
-    * @param orden
-    * @param mostrar
-    * @param pStart
-    * @return Document
-    */
-    private Document getHtmlDocument(String ciclo, String centro, String edificio, String orden, String mostrar, String pStart)
-            throws IOException{
-
-        Document document;
-
-        document = Jsoup.connect(formSIIAU).data("ciclop",ciclo).data("cup",centro).data("edifp",edificio)
-                .data("ordenp",orden).data("mostrarp",mostrar).data("p_start", pStart).post();
-
-        if(!document.hasText())
-            throw new IOException("Error al obtener documento.");
-        return document;
-
-    }
-
-    /**
-    * Con esta método compruebo el Status code de la respuesta que recibo al hacer la petición
-    * EJM:
-    * 		200 OK			300 Multiple Choicesd
-    * 		301 Moved Permanently	305 Use Proxy
-    * 		400 Bad Request		403 Forbidden
-    * 		404 Not Found		500 Internal Server Error
-    * 		502 Bad Gateway		503 Service Unavailable
-    * @param url
-    * @return Status Code
-    */
-    private int getStatusConnectionCode(String url) {
-        Response response;
-        try {
-            response = Jsoup.connect(url).userAgent("Mozilla/5.0").timeout(100000).ignoreHttpErrors(true).execute();
-            System.out.println("Status: " + response.statusCode());
-            return response.statusCode();
-        } catch (IOException ex) {
-            System.out.println("Excepción al obtener el Status Code: " + ex.getMessage());
-            return 0;
-        }
-    }
-
-    /**
-     * @return the hostSIIAU
-     */
-    public String getHostSIIAU() {
-        return hostSIIAU;
-    }
-
-    /**
-     * @param hostSIIAU the hostSIIAU to set
-     */
-    public void setHostSIIAU(String hostSIIAU) {
-        this.hostSIIAU = hostSIIAU;
-    }
-
+ 
     /**
      * @return the _Ciclo
      */
@@ -421,14 +378,6 @@ public class SIIAU {
      */
     public void setMostrar(String _Mostrar) {
         this._Mostrar = _Mostrar;
-    }
-
-    public String getFormSIIAU() {
-        return formSIIAU;
-    }
-
-    public void setFormSIIAU(String formSIIAU) {
-        this.formSIIAU = formSIIAU;
     }
 
     public int getpStart() {

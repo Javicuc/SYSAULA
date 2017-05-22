@@ -11,14 +11,14 @@ import Model.TablaAulas;
 import View.MainView;
 import View.SolicitudView;
 import com.github.lgooddatepicker.components.TimePicker;
+import com.github.lgooddatepicker.optionalusertools.TimeChangeListener;
+import com.github.lgooddatepicker.zinternaltools.TimeChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import static java.util.Arrays.asList;
@@ -26,7 +26,6 @@ import java.util.Calendar;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
@@ -35,7 +34,6 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.text.TabableView;
 
 /**
  *
@@ -50,7 +48,7 @@ public class MainViewcontroller implements ActionListener{
     
     private List<TablaAulas> data = new ArrayList<>();
     private List<Aula> dataAula = new ArrayList<>();
-    private List<String> dias = asList("Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"); 
+    private List<String> dias = asList("Domingo","Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"); 
     
     private JButton btSolicitar;
     private JButton btActualizar;
@@ -79,9 +77,30 @@ public class MainViewcontroller implements ActionListener{
         this.cbEdificio.setModel(new DefaultComboBoxModel(dao.getEdificioDAO().readAll().toArray()));
         this.tpHoraInicio = view.getTpHoraInicio();
         this.tpHoraFinal  = view.getTpHoraFinal();
+        this.tpHoraInicio.addTimeChangeListener(new TimeChangeListener() {
+            @Override
+            public void timeChanged(TimeChangeEvent tce) {
+                if(tce == null || tpHoraInicio.getTime().getHour() + 2 > 23)
+                    tpHoraFinal.setTime(LocalTime.MAX);
+                else
+                    tpHoraFinal.setTime(LocalTime.of(tpHoraInicio.getTime().getHour() + 2, 0));
+                System.out.println("Hora Inicio: " + tpHoraInicio.getTime().getHour());              
+            }
+        });
+        this.tpHoraFinal.addTimeChangeListener(new TimeChangeListener() {
+            @Override
+            public void timeChanged(TimeChangeEvent tce) {
+                if(tpHoraFinal.getTime().getHour() - 2 < 0)
+                    tpHoraInicio.setTime(LocalTime.MIN);
+                else
+                    tpHoraInicio.setTime(LocalTime.of(tpHoraFinal.getTime().getHour() - 2, 0));
+                System.out.println("Hora Final: " + tpHoraFinal.getTime().getHour());              
+            }
+        });
         this.tpHoraInicio.setTimeToNow();
-        this.tpHoraFinal.setTime(LocalTime.parse("21:00"));
+      
         
+        this.cbDias.setSelectedIndex(Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-1);
         this.dia = getDiaFormat(this.cbDias.getSelectedItem().toString());
         this.edif = this.cbEdificio.getSelectedItem().toString();
         this.hrI = Time.valueOf(this.tpHoraInicio.getTime());
@@ -103,8 +122,10 @@ public class MainViewcontroller implements ActionListener{
         this.aulatbModel.updateTable(this.getDia(),this.getEdif(),this.getHrI(),this.getHrF());
         this.tablaAulas = view.getTablaAulas();
         this.tablaAulas.setModel(aulatbModel);
+        this.tablaAulas.getColumnModel().getColumn(8).setWidth(0);
+        this.tablaAulas.getColumnModel().getColumn(8).setMinWidth(0);
+        this.tablaAulas.getColumnModel().getColumn(8).setMaxWidth(0); 
         
-        this.panelRegistros = view.getPanelRegistros();
         
     }
     
@@ -191,16 +212,14 @@ public class MainViewcontroller implements ActionListener{
         
         try {
             aula = getAulaSelect();
+            System.out.println(aula);
         } catch (SQLException ex) {
             Logger.getLogger(MainViewcontroller.class.getName()).log(Level.SEVERE, null, ex);
         }
         SolicitudView view = null;
         if(aula != null){
             view  = new SolicitudView(aula,getEdif());
-            this.panelRegistros.removeAll();
-            panelRegistros.updateUI();
-            view.getContentPane().setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
-            panelRegistros.add(view.getContentPane(),BorderLayout.PAGE_START);
+            view.setVisible(true);
         }else{
             JOptionPane.showMessageDialog(null, "No se selecciono ninguna aula!");
         }

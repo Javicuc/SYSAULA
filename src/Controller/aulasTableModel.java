@@ -30,13 +30,13 @@ public class aulasTableModel extends AbstractTableModel{
         switch(column){
             case 0: return "NRC";
             case 1: return "Clave";
-            case 2: return "Nombre";
+            case 2: return "Clase en Curso";
             case 3: return "Hora Inicio";
             case 4: return "Hora Final";
-            case 5: return "Dia";
+            case 5: return "Dias";
             case 6: return "Aula";
             case 7: return "Status";
-            case 8: return "ID";
+            case 8: return "ID Registrado";
             default: return "";
         }
     }

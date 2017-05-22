@@ -28,7 +28,7 @@ public class Lista_HorariosDAO implements iLista_HorariosDAO{
     private Connection con;
     
     final String INSERT = "INSERT INTO " + Tabla.LISTA_HORARIOS + " (" + COLLISTAHORARIOS.FK_AULA + ", " + COLLISTAHORARIOS.FK_MATERIA + ", " 
-            + COLLISTAHORARIOS.FK_PROFESOR + ", " + COLLISTAHORARIOS.STATUS + ") VALUES (?,?,?,?)";
+            + ", " + COLLISTAHORARIOS.STATUS + ") VALUES (?,?,?,?)";
     final String UPDATE = "UPDATE " + Tabla.LISTA_HORARIOS + " SET " + COLLISTAHORARIOS.STATUS + " = ? WHERE " 
             + COLLISTAHORARIOS.FK_AULA + " = ? AND " + COLLISTAHORARIOS.FK_MATERIA + " = ?";
     final String GETALL = "SELECT * FROM " + Tabla.LISTA_HORARIOS + " ORDER BY " + COLLISTAHORARIOS.STATUS;
@@ -54,8 +54,7 @@ public class Lista_HorariosDAO implements iLista_HorariosDAO{
             ps = con.prepareStatement(INSERT);
             ps.setString(1, obj.getFK_Aula());
             ps.setInt(2, obj.getFK_Materia());
-            ps.setInt(3, obj.getFK_Profesor());
-            ps.setByte(4, obj.getStatus());
+            ps.setBoolean(3, obj.getStatus());
             ps.executeUpdate();
             insertar = true;
         } catch (SQLException e) {
@@ -148,7 +147,7 @@ public class Lista_HorariosDAO implements iLista_HorariosDAO{
         PreparedStatement ps = null;
         try {
             ps = con.prepareStatement(UPDATE);
-            ps.setInt(1, obj.getStatus());
+            ps.setBoolean(1, obj.getStatus());
             ps.setString(2, obj.getFK_Aula());
             ps.setInt(3, obj.getFK_Materia());
             ps.executeUpdate();
@@ -211,9 +210,8 @@ public class Lista_HorariosDAO implements iLista_HorariosDAO{
             int id     = rs.getInt(COLLISTAHORARIOS.ID_LISTAHORARIO);
             String fka = rs.getString(COLLISTAHORARIOS.FK_AULA);
             int fkm    = rs.getInt(COLLISTAHORARIOS.FK_MATERIA);
-            int fkp    = rs.getInt(COLLISTAHORARIOS.FK_PROFESOR);
-            byte stat  = rs.getByte(COLLISTAHORARIOS.STATUS);
-            obj = new Lista_Horarios(id,fka,fkm,fkp,stat);
+            boolean stat  = rs.getBoolean(COLLISTAHORARIOS.STATUS);
+            obj = new Lista_Horarios(id,fka,fkm,stat);
         } catch (SQLException ex) {
             Logger.getLogger(Lista_Horarios.class.getName()).log(Level.SEVERE, null, ex);
         }

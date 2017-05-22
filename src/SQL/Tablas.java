@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package SQL;
 
 /**
@@ -17,7 +12,6 @@ public class Tablas {
         String MATERIA        = "Materia";
         String PROFESOR       = "Profesor";
         String UNIVERSIDAD    = "Universidad";
-        String MATERIAHORARIO = "MateriaHorario";
         String LISTA_HORARIOS = "Lista_Horarios";
         String SOLICITUD      = "Solicitud";
         
@@ -45,25 +39,21 @@ public class Tablas {
         String NOMBRE = "Nombre";
     }
     interface ColumnasProfesor{
-        String ID_PROFESOR = "ID_Profesor";
-        String NOMBRE      = "Nombre";
-        String FK_CENTRO   = "FK_Centro";
+        String ID_PROFESOR  = "ID_Profesor";
+        String NOMBRE       = "Nombre";
+        String DEPARTAMENTO = "Departamento";
+        String FK_CENTRO    = "FK_Centro";
     }
     interface ColumnasUniversidad{
         String ID_CENTRO = "ID_Centro";
         String NOMBRE    = "Nombre";
         String ACRONIMO  = "Acronimo";
     }
-    interface ColumnasMateriaHorario{
-        String FK_MATERIA = "FK_Materia";
-        String FK_HORARIO = "FK_Horario";
-    }
     interface ColumnasListaHorarios{
         String ID_LISTAHORARIO = "ID_ListaHorario";
         String FK_AULA      = "FK_Aula";
         String FK_MATERIA   = "FK_Materia";
-        String FK_PROFESOR  = "FK_Profesor";
-        String STATUS       = "Status";
+        String STATUS       = "Estado";
     }
     interface ColumnasSolicitud{
         String ID_SOLICITUD = "ID_Solicitud";
@@ -90,9 +80,6 @@ public class Tablas {
         
     }
     public static class COLUNIVERSIDAD implements ColumnasUniversidad{
-        
-    }
-    public static class COLMATERIAHORARIO implements ColumnasMateriaHorario{
         
     }
     public static class COLLISTAHORARIOS implements ColumnasListaHorarios{

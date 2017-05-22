@@ -5,24 +5,36 @@
  */
 package Data;
 
-import java.io.Serializable;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.List;
 
 /**
  *
  * @author javilubz
  */
-public class ConfigOferta implements Serializable{
+public class ConfigWrite {
+    
+    private Properties properties = null;
+    private final static String CONFIG_FILE_NAME = "config.properties";
+    
     private String Centro;
     private String AcronimoCentro;
     private String Ciclo;
     private String LetraCentro;
     private List<String> EdificiosCentro;
 
-    public ConfigOferta() {
+    private ConfigWrite() {
+        this.properties = new Properties();
+        try {
+            properties.load(ConfigWrite.class.getClassLoader().getResourceAsStream(CONFIG_FILE_NAME));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
-    public ConfigOferta(String Centro, String AcronimoCentro, String Ciclo, String LetraCentro, List<String> EdificiosCentro) {
+    public ConfigWrite(String Centro, String AcronimoCentro, String Ciclo, String LetraCentro, List<String> EdificiosCentro) {
         this.Centro = Centro;
         this.AcronimoCentro = AcronimoCentro;
         this.Ciclo = Ciclo;

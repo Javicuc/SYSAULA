@@ -25,8 +25,9 @@ import java.util.logging.Logger;
 public class ProfesorDAO implements iProfesorDAO{
     private Connection con;
     
-    final String INSERT = "INSERT INTO " + Tabla.PROFESOR + " (" + COLPROFESOR.NOMBRE + ", " + COLPROFESOR.FK_CENTRO + ") VALUES (?,?)";
-    final String UPDATE = "UPDATE " + Tabla.PROFESOR + " SET " + COLPROFESOR.NOMBRE + " = ?, " + COLPROFESOR.FK_CENTRO + " = ? WHERE " + COLPROFESOR.ID_PROFESOR + " = ?";
+    final String INSERT = "INSERT INTO " + Tabla.PROFESOR + " (" + COLPROFESOR.NOMBRE + ", " + COLPROFESOR.DEPARTAMENTO + ", " + COLPROFESOR.FK_CENTRO + ") VALUES (?,?)";
+    final String UPDATE = "UPDATE " + Tabla.PROFESOR + " SET " + COLPROFESOR.NOMBRE + " = ?, " +COLPROFESOR.DEPARTAMENTO +" = ?, "
+                          + COLPROFESOR.FK_CENTRO + " = ? WHERE " + COLPROFESOR.ID_PROFESOR + " = ?";
     final String GETALL = "SELECT * FROM " + Tabla.PROFESOR + " ORDER BY " + COLPROFESOR.NOMBRE;
     final String GETONE = "SELECT * FROM " + Tabla.PROFESOR + " WHERE " + COLPROFESOR.ID_PROFESOR + " = ?";
     final String DELETE = "DELETE FROM " + Tabla.PROFESOR + " WHERE " + COLPROFESOR.ID_PROFESOR + " = ?";
@@ -43,7 +44,8 @@ public class ProfesorDAO implements iProfesorDAO{
         try {
             ps = con.prepareStatement(INSERT);
             ps.setString(1, obj.getNombre());
-            ps.setString(2, obj.getFK_Universidad());
+            ps.setString(2, obj.getDepartamento());
+            ps.setString(3, obj.getFK_Universidad());
             ps.executeUpdate();
             insertar = true;
         } catch (SQLException e) {
@@ -137,8 +139,9 @@ public class ProfesorDAO implements iProfesorDAO{
         try {
             ps = con.prepareStatement(UPDATE);
             ps.setString(1, obj.getNombre());
-            ps.setString(2, obj.getFK_Universidad());
-            ps.setInt(3, obj.getID_Profesor());
+            ps.setString(2, obj.getDepartamento());
+            ps.setString(3, obj.getFK_Universidad());
+            ps.setInt(4, obj.getID_Profesor());
             ps.executeUpdate();
             actualizar = true;
         } catch (SQLException e) {
@@ -198,8 +201,9 @@ public class ProfesorDAO implements iProfesorDAO{
         try {
             int    id_prof = rs.getInt(COLPROFESOR.ID_PROFESOR);
             String nombre  = rs.getString(COLPROFESOR.NOMBRE);
-            String centro = rs.getString(COLPROFESOR.FK_CENTRO);
-            obj = new Profesor(id_prof, nombre, centro);
+            String dpto    = rs.getString(COLPROFESOR.DEPARTAMENTO);
+            String centro  = rs.getString(COLPROFESOR.FK_CENTRO);
+            obj = new Profesor(id_prof, nombre, dpto,centro);
         } catch (SQLException ex) {
             Logger.getLogger(AulaDAO.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Model;
 
 import java.util.Objects;
@@ -14,15 +9,17 @@ import java.util.Objects;
 public class Profesor {
     private int ID_Profesor;
     private String Nombre;
+    private String Departamento;
     private String FK_Universidad;
     
     public Profesor(){
         
     }
 
-    public Profesor(int ID_Profesor, String Nombre, String FK_Universidad) {
+    public Profesor(int ID_Profesor, String Nombre, String Departamento, String FK_Universidad) {
         this.ID_Profesor = ID_Profesor;
         this.Nombre = Nombre;
+        this.Departamento = Departamento;
         this.FK_Universidad = FK_Universidad;
     }
 
@@ -31,11 +28,13 @@ public class Profesor {
         this.FK_Universidad = fku;
     }
 
-    @Override
-    public String toString() {
-        return "Profesor{" + "ID_Profesor=" + ID_Profesor + ", Nombre=" + Nombre + ", FK_Universidad=" + FK_Universidad + '}';
+    public String getDepartamento() {
+        return Departamento;
     }
 
+    public void setDepartamento(String Departamento) {
+        this.Departamento = Departamento;
+    }
 
     public int getID_Profesor() {
         return ID_Profesor;

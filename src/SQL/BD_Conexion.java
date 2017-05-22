@@ -5,9 +5,12 @@
  */
 package SQL;
 
+import Data.ConfigLoad;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,12 +47,15 @@ static Connection conex;
     }
 
     private void performConnection() throws ClassNotFoundException {
-        String host = "127.0.0.1";//host de la base de datos
-        String user = "root";//usuario de la base de datos
-        String pass = "5151";//contraseña de la base de datos
-        String dtbs = "sysaulaBD";//nombre de la base de datos
-        int    port = 3306;
- 
+        ConfigLoad load = ConfigLoad.getInstance();
+        
+        String host = load.getProperty(ConfigLoad.DATABASE_SERVER);//host de la base de datos
+        String dtbs = load.getProperty(ConfigLoad.DATABASE_CATALOG);//nombre de la base de datos
+        String user = load.getProperty(ConfigLoad.DATABASE_USER);//usuario de la base de datos
+        String pass = load.getProperty(ConfigLoad.DATABASE_PSWD);//contraseña de la base de datos
+        int    port = Integer.valueOf(load.getProperty(ConfigLoad.DATABASE_PORT)); // Puerto de la base de datos
+        
+        
         try { 
             Class.forName("com.mysql.jdbc.Driver");
             String newConnectionURL = "jdbc:mysql://" + host + ":" + port + "/" + dtbs + "?&useSSL=false";

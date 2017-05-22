@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import Scraping.ScrapAula;
 import Scraping.ScrapEdif;
 import Scraping.ScrapMateria;
+import com.opencsv.CSVWriter;
+import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -129,7 +131,63 @@ public class ScrapToBD implements Runnable{
                 cst.close();
         }
     }
+    
+     void insertEdificioCSV(ScrapEdif obj,CSVWriter writer){
+       
+            String[] edificio = {obj.getNombre(),obj.getCentro()};        
+            writer.writeNext(edificio);
+    }
+    
+    public void insertAulaCsv(ScrapAula obj,CSVWriter writer){
+        String[] aula = {obj.getEdificio()+obj.getNumero(),obj.getNumero(),obj.getEdificio()}; 
+        writer.writeNext(aula);
+    }
 
+    public void insertMateriaHorariosCsv(ScrapMateria obj,CSVWriter Materia,CSVWriter Horario,CSVWriter Lhorario, String idAula){
+        String[] materia_ = {obj.getNRC(),obj.getClave(),obj.getNombre()};
+        String[] horario_ = {null,obj.getHora_Inicio(),obj.getHora_Fin(),obj.getDias(),obj.getNRC()};
+        String[] lhorario_ = {null,idAula,obj.getNRC(),"0"};
+        Materia.writeNext(materia_);
+        Horario.writeNext(horario_);
+        Lhorario.writeNext(lhorario_);
+    }
+    
+    public void Tabla_aula(String url) throws SQLException{
+        System.out.println("Aula: " + url);
+        PreparedStatement consulta;
+        consulta = con.prepareStatement("LOAD DATA LOCAL INFILE '"+url+"' IGNORE INTO TABLE Aula FIELDS TERMINATED BY ',' "
+                    + "OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\\n'");
+        consulta.executeQuery();
+    }
+    public void Tabla_edificio(String url) throws SQLException{
+        System.out.println("Edificio: " + url);
+        PreparedStatement consulta;
+        consulta = con.prepareStatement("LOAD DATA LOCAL INFILE '"+url+"' INTO TABLE Edificio FIELDS TERMINATED BY ',' "
+                    + "OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\\n'");
+        consulta.executeQuery();
+    }
+    public void Tabla_materia(String url) throws SQLException{
+        System.out.println("Materia: " + url);
+        PreparedStatement consulta;
+        consulta = con.prepareStatement("LOAD DATA LOCAL INFILE '"+url+"' IGNORE INTO TABLE Materia FIELDS TERMINATED BY ',' "
+                    + "OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\\n'");
+        consulta.executeQuery();
+    }
+    public void Tabla_horario(String url) throws SQLException{
+        System.out.println("Horario: " + url);
+        PreparedStatement consulta;
+        consulta = con.prepareStatement("LOAD DATA LOCAL INFILE '"+url+"' IGNORE INTO TABLE Horario FIELDS TERMINATED BY ',' "
+                    + "OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\\n'");
+        consulta.executeQuery();
+    }
+    public void Tabla_lhorario(String url) throws SQLException{
+        System.out.println("lHorario: " + url);
+        PreparedStatement consulta;
+        consulta = con.prepareStatement("LOAD DATA LOCAL INFILE '"+url+"' IGNORE INTO TABLE Lista_Horarios FIELDS TERMINATED BY ',' "
+                    + "OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\\n'");
+        consulta.executeQuery();
+    }
+    
     @Override
     public void run() {
         try {

@@ -20,12 +20,12 @@ public class TablaAulas {
     private Time HoraFinal;
     private String Dia;
     private String Aula;
-    private byte Status;
+    private boolean Status;
     private int ID_ListaHorario;
 
     public TablaAulas() {
     }
-    public TablaAulas(Time HoraInicio, Time HoraFinal, String Dia,String Aula,byte Status){
+    public TablaAulas(Time HoraInicio, Time HoraFinal, String Dia,String Aula,boolean Status){
         this.ID_NRC = 0;
         this.Clave  = "XXXXX";
         this.Nombre = "No Registrado";
@@ -36,7 +36,7 @@ public class TablaAulas {
         this.Status = Status;
         
     }
-    public TablaAulas(int ID_NRC, String Clave, String Nombre, Time HoraInicio, Time HoraFinal, String Dia, String Aula, byte Status, int ID_ListaHorario) {
+    public TablaAulas(int ID_NRC, String Clave, String Nombre, Time HoraInicio, Time HoraFinal, String Dia, String Aula, boolean Status, int ID_ListaHorario) {
         this.ID_NRC = ID_NRC;
         this.Clave = Clave;
         this.Nombre = Nombre;
@@ -109,11 +109,11 @@ public class TablaAulas {
         this.Aula = Aula;
     }
 
-    public byte getStatus() {
+    public boolean getStatus() {
         return Status;
     }
 
-    public void setStatus(byte Status) {
+    public void setStatus(boolean Status) {
         this.Status = Status;
     }
 

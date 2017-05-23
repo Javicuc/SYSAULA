@@ -14,34 +14,37 @@ import java.util.Objects;
  */
 public class Horario {
     
-    private int    ID_Horario;
-    private String Hora_Inicio;
-    private String Hora_Final;
+    private int  ID_Horario;
+    private Time Hora_Inicio;
+    private Time Hora_Final;
     private String Dia;
-    private int FK_Materia;
+    private int    FK_Materia;
     
     public Horario(){
         
     }
-    public Horario(String hri, String hrf, String d, int fkm){
-        this.Hora_Inicio = hri;
-        this.Hora_Final  = hrf;
-        this.Dia         = d;
+    public Horario(Time horaInicio, Time horaFinal, String dias, int fkm){
+        this.Hora_Inicio = horaInicio;
+        this.Hora_Final  = horaFinal;
+        this.Dia         = dias;
         this.FK_Materia  = fkm;
     }
-    public Horario(int id, String hri, String hrf, String d, int fkm){
-        this.ID_Horario  = id;
-        this.Hora_Inicio = hri;
-        this.Hora_Final  = hrf;
-        this.Dia         = d;
-        this.FK_Materia  = fkm;
+
+    public Horario(int ID_Horario, Time Hora_Inicio, Time Hora_Final, String Dia, int FK_Materia) {
+        this.ID_Horario = ID_Horario;
+        this.Hora_Inicio = Hora_Inicio;
+        this.Hora_Final = Hora_Final;
+        this.Dia = Dia;
+        this.FK_Materia = FK_Materia;
     }
 
     @Override
     public String toString() {
         return "Horario{" + "ID_Horario=" + ID_Horario + ", Hora_Inicio=" + Hora_Inicio + ", Hora_Final=" + Hora_Final + ", Dia=" + Dia + ", FK_Materia=" + FK_Materia + '}';
     }
+    
 
+    
     /**
      * @return the ID_Horario
      */
@@ -56,31 +59,19 @@ public class Horario {
         this.ID_Horario = ID_Horario;
     }
 
-    /**
-     * @return the Hora_Inicio
-     */
-    public String getHora_Inicio() {
+    public Time getHora_Inicio() {
         return Hora_Inicio;
     }
 
-    /**
-     * @param Hora_Inicio the Hora_Inicio to set
-     */
-    public void setHora_Inicio(String Hora_Inicio) {
+    public void setHora_Inicio(Time Hora_Inicio) {
         this.Hora_Inicio = Hora_Inicio;
     }
 
-    /**
-     * @return the Hora_Final
-     */
-    public String getHora_Final() {
+    public Time getHora_Final() {
         return Hora_Final;
     }
 
-    /**
-     * @param Hora_Final the Hora_Final to set
-     */
-    public void setHora_Final(String Hora_Final) {
+    public void setHora_Final(Time Hora_Final) {
         this.Hora_Final = Hora_Final;
     }
 
@@ -109,11 +100,11 @@ public class Horario {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 29 * hash + this.ID_Horario;
-        hash = 29 * hash + Objects.hashCode(this.Hora_Inicio);
-        hash = 29 * hash + Objects.hashCode(this.Hora_Final);
-        hash = 29 * hash + Objects.hashCode(this.Dia);
-        hash = 29 * hash + this.FK_Materia;
+        hash = 37 * hash + this.ID_Horario;
+        hash = 37 * hash + Objects.hashCode(this.Hora_Inicio);
+        hash = 37 * hash + Objects.hashCode(this.Hora_Final);
+        hash = 37 * hash + Objects.hashCode(this.Dia);
+        hash = 37 * hash + this.FK_Materia;
         return hash;
     }
 
@@ -135,17 +126,19 @@ public class Horario {
         if (this.FK_Materia != other.FK_Materia) {
             return false;
         }
+        if (!Objects.equals(this.Dia, other.Dia)) {
+            return false;
+        }
         if (!Objects.equals(this.Hora_Inicio, other.Hora_Inicio)) {
             return false;
         }
         if (!Objects.equals(this.Hora_Final, other.Hora_Final)) {
             return false;
         }
-        if (!Objects.equals(this.Dia, other.Dia)) {
-            return false;
-        }
         return true;
     }
+
+    
     
     
     

@@ -43,6 +43,12 @@ public class Lista_HorariosDAO implements iLista_HorariosDAO{
             + "WHERE Aula.FK_Edificio = ? AND Horario.Hora_Inicio >= ? AND Horario.Hora_Final <= ? "
             + "AND Horario.Dia LIKE ? ORDER BY Aula.Numero, Horario.Hora_Inicio";
     
+    final String GETALLAULAS = "SELECT Materia.ID_NRC,Materia.Clave,Materia.Nombre,Horario.Hora_Inicio,"
+            + "Horario.Hora_Final,Horario.Dia,Aula.Numero,Lista_Horarios.Estado,Lista_Horarios.ID_ListaHorario "
+            + "FROM Materia INNER JOIN Horario ON Materia.ID_NRC = Horario.FK_Materia "
+            + "INNER JOIN Lista_Horarios ON Materia.ID_NRC = Lista_Horarios.FK_Materia "
+            + "INNER JOIN Aula ON Lista_Horarios.FK_Aula = Aula.ID_Aula ";
+    
     public Lista_HorariosDAO(Connection con){
         this.con = con;
     }
@@ -218,6 +224,38 @@ public class Lista_HorariosDAO implements iLista_HorariosDAO{
         return obj;
     }
     
+    public List<TablaAulas> getAllTablaAulas() throws SQLException{
+        List<TablaAulas> list = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = con.prepareStatement(GETALLAULAS);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                TablaAulas obj = convertirAulaRS(rs);
+                list.add(obj);
+            }
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        } finally {
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new SQLException(e);
+                }
+            }
+            if(rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new SQLException(e);
+                }    
+            }
+        }
+        return list;
+    }
+    
     public List<TablaAulas> getTablaAulas(String edificio, Time HRi, Time HRf, String dia) throws SQLException{
         List<TablaAulas> list = new ArrayList<>();
         PreparedStatement ps = null;
@@ -263,7 +301,7 @@ public class Lista_HorariosDAO implements iLista_HorariosDAO{
             Time hrf = rs.getTime("Hora_Final");
             String dia = rs.getString("Dia");
             String aula = rs.getString("Numero");
-            byte status = rs.getByte("Estado");
+            boolean status = rs.getBoolean("Estado");
             int idLista = rs.getInt("ID_ListaHorario");
             obj = new TablaAulas(id, clave, nombre, hri, hrf, dia, aula, status, idLista);
         } catch (SQLException ex) {

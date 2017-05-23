@@ -12,6 +12,7 @@ import java.util.Objects;
  * @author javilubz
  */
 public class Universidad {
+    
     private String ID_Centro;
     private String Nombre;
     private String Acronimo;
@@ -52,7 +53,7 @@ public class Universidad {
 
     @Override
     public String toString() {
-        return "Universidad{" + "ID_Centro=" + ID_Centro + ", Nombre=" + Nombre + ", Acronimo=" + Acronimo + '}';
+        return ID_Centro;
     }
 
     @Override

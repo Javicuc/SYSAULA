@@ -5,10 +5,15 @@
  */
 package Data;
 
+import Scraping.initScrapping;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -16,71 +21,76 @@ import java.util.List;
  */
 public class ConfigWrite {
     
-    private Properties properties = null;
-    private final static String CONFIG_FILE_NAME = "config.properties";
+    public ConfigWrite() throws IOException {
+    }
     
-    private String Centro;
-    private String AcronimoCentro;
-    private String Ciclo;
-    private String LetraCentro;
-    private List<String> EdificiosCentro;
-
-    private ConfigWrite() {
-        this.properties = new Properties();
+    public void writeConfig(ConfigSysAula objConfig){
+        
+        String centros = ConfigLoad.getInstance().getProperty(ConfigLoad.SIIAU_UNIVERSIDAD);
+        String ciclos = ConfigLoad.getInstance().getProperty(ConfigLoad.SIIAU_CALENDARIO);
+        
+        if(ciclos.isEmpty() || centros.isEmpty()){
+            initScrapping initScrap = null;
+            try {
+                initScrap = new initScrapping();
+            } catch (IOException ex) {
+                Logger.getLogger(ConfigWrite.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            ciclos = String.join(",", initScrap.getListCiclos());
+            centros = String.join(",", initScrap.getListCentros());
+        }
+        //List<String> ciclos  = Arrays.asList( ciclos.split( "," ) );
+        //List<String> centros = Arrays.asList( centros.split( "," ) );
+        
+        FileInputStream in = null;
+        Properties props = null;
+        
         try {
-            properties.load(ConfigWrite.class.getClassLoader().getResourceAsStream(CONFIG_FILE_NAME));
+            in = new FileInputStream(new File("nbproject/config.properties").getAbsolutePath().replace('\\', '/'));
+            props = new Properties();
+            props.load(in);
+            in.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ConfigWrite.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(ConfigWrite.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        FileOutputStream out;
+        try {
+            out = new FileOutputStream(new File("nbproject/config.properties").getAbsolutePath().replace('\\', '/'));
+            if(ConfigLoad.getInstance().getProperty(ConfigLoad.DATABASE_SERVER).isEmpty())
+                props.setProperty(ConfigLoad.DATABASE_SERVER , objConfig.getServidor()); // Servidor de la BD
+            else if(ConfigLoad.getInstance().getProperty(ConfigLoad.SIIAU_MOSTRARCON).isEmpty())
+                props.setProperty(ConfigLoad.SIIAU_MOSTRARCON , objConfig.getMostrarRegConsulta()); // Mostrar la cantidad de reg en consulta
+            else if(ConfigLoad.getInstance().getProperty(ConfigLoad.DATABASE_CATALOG).isEmpty())
+                props.setProperty(ConfigLoad.DATABASE_CATALOG , objConfig.getBaseDatos()); // Nombre base de datos
+            else if(ConfigLoad.getInstance().getProperty(ConfigLoad.SIIAU_ORDENCON).isEmpty())
+                props.setProperty(ConfigLoad.SIIAU_ORDENCON , objConfig.getOrdenConsulta()); // Orden a mostrar de la consulta
+            else if(ConfigLoad.getInstance().getProperty(ConfigLoad.SIIAU_UNIVERSIDAD).isEmpty())
+                props.setProperty(ConfigLoad.SIIAU_UNIVERSIDAD, centros); // Centros de la oferta academica
+            else if(ConfigLoad.getInstance().getProperty(ConfigLoad.DATABASE_PORT).isEmpty())
+                props.setProperty(ConfigLoad.DATABASE_PORT , objConfig.getPuerto()); // Puerto base de datos
+            else if(ConfigLoad.getInstance().getProperty(ConfigLoad.SIIAU_CALACTUAL).isEmpty())
+                props.setProperty(ConfigLoad.SIIAU_CALACTUAL , objConfig.getCalendario()); // Calendario actual con el que trabaja el sistema
+            else if(ConfigLoad.getInstance().getProperty(ConfigLoad.DATABASE_PSWD).isEmpty())
+                props.setProperty(ConfigLoad.DATABASE_PSWD , objConfig.getClave()); // Clave del usuario
+            else if(ConfigLoad.getInstance().getProperty(ConfigLoad.DATABASE_USER).isEmpty())
+                props.setProperty(ConfigLoad.DATABASE_USER , objConfig.getUsuario()); // Usuario de la BD
+            else if(ConfigLoad.getInstance().getProperty(ConfigLoad.SIIAU_CUACTUAL).isEmpty())
+                props.setProperty(ConfigLoad.SIIAU_CUACTUAL , objConfig.getUniversidad()); // Universidad actual con el que trabaja el sistema
+            else if(ConfigLoad.getInstance().getProperty(ConfigLoad.SIIAU_CALENDARIO).isEmpty())
+                props.setProperty(ConfigLoad.SIIAU_CALENDARIO, ciclos); // Calendarios de la oferta academica
+            else 
+                System.out.println("El archivo de configuración no tuvo cambios");
+                       
+            props.store(out, null);
+            out.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ConfigWrite.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ConfigWrite.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    public ConfigWrite(String Centro, String AcronimoCentro, String Ciclo, String LetraCentro, List<String> EdificiosCentro) {
-        this.Centro = Centro;
-        this.AcronimoCentro = AcronimoCentro;
-        this.Ciclo = Ciclo;
-        this.LetraCentro = LetraCentro;
-        this.EdificiosCentro = EdificiosCentro;
-    }
-
-    public String getCentro() {
-        return Centro;
-    }
-
-    public void setCentro(String Centro) {
-        this.Centro = Centro;
-    }
-
-    public String getAcronimoCentro() {
-        return AcronimoCentro;
-    }
-
-    public void setAcronimoCentro(String AcronimoCentro) {
-        this.AcronimoCentro = AcronimoCentro;
-    }
-
-    public String getCiclo() {
-        return Ciclo;
-    }
-
-    public void setCiclo(String Ciclo) {
-        this.Ciclo = Ciclo;
-    }
-
-    public String getLetraCentro() {
-        return LetraCentro;
-    }
-
-    public void setLetraCentro(String LetraCentro) {
-        this.LetraCentro = LetraCentro;
-    }
-
-    public List<String> getEdificiosCentro() {
-        return EdificiosCentro;
-    }
-
-    public void setEdificiosCentro(List<String> EdificiosCentro) {
-        this.EdificiosCentro = EdificiosCentro;
-    }
-    
     
 }

@@ -7,7 +7,6 @@ package Model.DAO;
 
 import Model.Aula;
 import Model.InterfaceDAO.iAulaDAO;
-import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

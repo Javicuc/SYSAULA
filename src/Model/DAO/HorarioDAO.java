@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import SQL.Tablas.COLHORARIO;
 import SQL.Tablas.Tabla;
+import java.sql.Time;
 
 /**
  *
@@ -44,8 +45,8 @@ public class HorarioDAO implements iHorarioDAO{
         PreparedStatement ps = null;
         try {
             ps = con.prepareStatement(INSERT);
-            ps.setString(1, obj.getHora_Inicio());
-            ps.setString(2, obj.getHora_Final());
+            ps.setTime(1, obj.getHora_Inicio());
+            ps.setTime(2, obj.getHora_Final());
             ps.setString(3, obj.getDia());
             ps.setInt(4, obj.getFK_Materia());
             ps.executeUpdate();
@@ -113,8 +114,8 @@ public class HorarioDAO implements iHorarioDAO{
         PreparedStatement ps = null;
         try {
             ps = con.prepareStatement(UPDATE);
-            ps.setString(1, obj.getHora_Inicio());
-            ps.setString(2, obj.getHora_Final());
+            ps.setTime(1, obj.getHora_Inicio());
+            ps.setTime(2, obj.getHora_Final());
             ps.setString(3, obj.getDia());
             ps.setInt(4, obj.getFK_Materia());
             ps.setInt(5, obj.getID_Horario());
@@ -175,12 +176,12 @@ public class HorarioDAO implements iHorarioDAO{
     private Horario convertirRS(ResultSet rs){
         Horario horario = null;
         try {
-            int    id  = rs.getInt("ID_Horario");
-            String hri = rs.getString("Hora_Inicio");
-            String hrf = rs.getString("Hora_Final");
-            String d   = rs.getString("Dia");
-            int    fkm = rs.getInt("FK_Materia");
-            horario = new Horario(id, hri, hrf, d, fkm);
+            int    id  = rs.getInt(COLHORARIO.ID_HORARIO);
+            Time   hri = rs.getTime(COLHORARIO.HORA_INICIO);
+            Time   hrf = rs.getTime(COLHORARIO.HORA_FINAL);
+            String dia = rs.getString(COLHORARIO.DIA);
+            int    fkm = rs.getInt(COLHORARIO.FK_MATERIA);
+            horario = new Horario(id, hri, hrf, dia, fkm);
         } catch (SQLException ex) {
             Logger.getLogger(HorarioDAO.class.getName()).log(Level.SEVERE, null, ex);
         }

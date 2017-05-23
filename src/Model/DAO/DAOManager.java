@@ -25,6 +25,7 @@ public class DAOManager implements iDAOManager{
     private ProfesorDAO profesorDao = null;
     private SolicitudDAO solicitudDao = null;
     private UniversidadDAO universidadDao = null;
+    private LoginDAO loginDao = null;
     
     public DAOManager(){
         this.con = BD_Conexion.getInstance();
@@ -84,6 +85,13 @@ public class DAOManager implements iDAOManager{
         if(this.universidadDao == null)
             universidadDao = new UniversidadDAO(con);
         return universidadDao;
+    }
+
+    @Override
+    public LoginDAO getLoginDAO() {
+        if(this.loginDao == null)
+            loginDao = new LoginDAO(con);
+        return loginDao;
     }
     
 }

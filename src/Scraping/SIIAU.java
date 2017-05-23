@@ -1,16 +1,20 @@
 package Scraping;
 
+import Data.ConfigLoad;
 import com.opencsv.CSVWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import static java.util.Arrays.asList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;;
+import java.util.Set;import javax.swing.JOptionPane;
+import jdk.nashorn.internal.runtime.regexp.joni.Config;
+;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,6 +26,7 @@ import org.jsoup.select.Elements;
  * @author Javicuc
  */
 public class SIIAU {
+    
     private String  _Ciclo;    // ciclop;
     private String  _Centro;   // cup;
     private String  _Carrera;  // majrp;
@@ -41,14 +46,20 @@ public class SIIAU {
     private List<ScrapMateria> listMaterias; // Materias
     private List<ScrapEdif>    listHorarios; // Edificios -> Aulas -> Materias
     private ScrapToBD scraptobd;
+    
+    CSVWriter csvEdificio;
+    private CSVWriter csvAula;
+    private CSVWriter csvMateria;
+    private CSVWriter csvHorario;
+    private CSVWriter csvlhorario;
+    
 
     public SIIAU() throws IOException {
-        this._listEdificios = asList("DEDA","DEDCS","DEDD","DEDE","DEDF","DEDG","DEDH","DEDI","DEDK","DEDL","DEDM",
-                "DEDN","DEDP","DEDQ","DEDR","DEDS","DEDT","DEDU","DEDV","DEDW","DEDX","DUCT1","DUCT2");
-        this._Mostrar  = "500";
-        this._Orden    = "0";
-        this._Centro   = "D";
-        this._Ciclo    = "201710";
+        this._listEdificios = Arrays.asList(ConfigLoad.getInstance().getProperty(ConfigLoad.SIIAU_EDIFSCUCEI).split(","));
+        this._Centro   = ConfigLoad.getInstance().getProperty(ConfigLoad.SIIAU_CUACTUAL);
+        this._Ciclo    = ConfigLoad.getInstance().getProperty(ConfigLoad.SIIAU_CALACTUAL);
+        this._Mostrar  = ConfigLoad.getInstance().getProperty(ConfigLoad.SIIAU_MOSTRARCON);
+        this._Orden    = ConfigLoad.getInstance().getProperty(ConfigLoad.SIIAU_ORDENCON);
         this.listHorarios   = new ArrayList<>();
         this.scraptobd = new ScrapToBD();
     }
@@ -67,67 +78,59 @@ public class SIIAU {
     
     public void scrapSIIAU() throws IOException, SQLException {
         ScrapHelper helper = new ScrapHelper();
-        if (helper.getStatusConnectionCode(helper.getHostSIIAU()) == 200) {
+        if (!isExistsCSV(getCentro())) {
+            if (helper.getStatusConnectionCode(helper.getHostSIIAU()) == 200) {
+                for (String edif : _listEdificios) {
 
-            CSVWriter csvEdificio = new CSVWriter(new FileWriter("csv/Edificio.csv"), ',');
-            CSVWriter csvAula = new CSVWriter(new FileWriter("csv/Aula.csv"), ',');
-            CSVWriter csvMateria = new CSVWriter(new FileWriter("csv/Materia.csv"), ',');
-            CSVWriter csvHorario = new CSVWriter(new FileWriter("csv/Horario.csv"), ',');
-            CSVWriter csvlhorario = new CSVWriter(new FileWriter("csv/LHorario.csv"), ',');
+                    this.setEdificio(edif);
+                    this.listAulas = new ArrayList<>();     // Creamos una lista de aulas por cada recorrido
+                    this.listMaterias = new ArrayList<>(); // Creamos una lista de materias por cada recorrido
 
-            for (String edif : _listEdificios) {
+                    ScrapEdif ded = new ScrapEdif(); // Creamos un nuevo edificio por cada recorrido 
+                    ded.setNombre(edif);
+                    ded.setCentro(getCentro());
+                    scraptobd.insertEdificioCSV(ded, csvEdificio); // Insertamos el edificio en archivo
 
-                this.setEdificio(edif);
-                this.listAulas = new ArrayList<>();     // Creamos una lista de aulas por cada recorrido
-                this.listMaterias = new ArrayList<>(); // Creamos una lista de materias por cada recorrido
+                    System.out.println(edif);
 
-                ScrapEdif ded = new ScrapEdif(); // Creamos un nuevo edificio por cada recorrido 
-                ded.setNombre(edif);
-                ded.setCentro(getCentro());
-                scraptobd.insertEdificioCSV(ded, csvEdificio); // Insertamos el edificio en archivo
-                
-                System.out.println(edif);
+                    boolean isNext = true;
+                    setpStart(0);
 
-                boolean isNext = true;
-                setpStart(0);
-
-                while (isNext) {
-                    Document document = helper.getHtmlDocument(getCiclo(), getCentro(), getEdificio(), // Obtenemos el documento
-                            getOrden(), getMostrar(), String.valueOf(getpStart())); // con los siguientes parametros
-                    Element table = document.select("table").get(0); // Seleccionamos la primera tabla del documento
-                    Elements rows = table.select("tr"); // Seleccionamos todas las filas 
-                    if (rows.size() > 2) { // Si hay más datos después de las cabeceras...
-                        for (int i = 2; i < rows.size(); i++) { // Iteramos despues de las cabeceras
-                            Element data = rows.get(i); // Guardamos la fila 
-                            if (data.getElementsByClass("tddatos").hasText() // Si la fila contiene datos y
-                                    && data.getElementsByClass("td1").select("td:eq(1)").hasText()) { // si hay horario...
-                                validaData(data); // Validamos la fila y extraemos la 
+                    while (isNext) {
+                        Document document = helper.getHtmlDocument(getCiclo(), getCentro(), getEdificio(), // Obtenemos el documento
+                                getOrden(), getMostrar(), String.valueOf(getpStart())); // con los siguientes parametros
+                        Element table = document.select("table").get(0); // Seleccionamos la primera tabla del documento
+                        Elements rows = table.select("tr"); // Seleccionamos todas las filas 
+                        if (rows.size() > 2) { // Si hay más datos después de las cabeceras...
+                            for (int i = 2; i < rows.size(); i++) { // Iteramos despues de las cabeceras
+                                Element data = rows.get(i); // Guardamos la fila 
+                                if (data.getElementsByClass("tddatos").hasText() // Si la fila contiene datos y
+                                        && data.getElementsByClass("td1").select("td:eq(1)").hasText()) { // si hay horario...
+                                    validaData(data); // Validamos la fila y extraemos la 
+                                }
                             }
+                        } else { // Si no hay más datos despues de la cabecera
+                            isNext = false;
                         }
-                    } else { // Si no hay más datos despues de la cabecera
-                        isNext = false;
+                        setpStart(this.getpStart() + 100); // Comprobamos si no hay segunda pagina
                     }
-                    setpStart(this.getpStart() + 100); // Comprobamos si no hay segunda pagina
+                    // Metodo que vincula las materias(NRC) con su respectiva aula
+                    assignAulaMateria(csvAula, csvMateria, csvHorario, csvlhorario);
+                    ded.setListAulas(listAulas); // Agregamos la lista de aulas al edificio
+                    listHorarios.add(ded); // Agregamos a la lista de edificios  
                 }
-                // Metodo que vincula las materias(NRC) con su respectiva aula
-                assignAulaMateria(csvAula, csvMateria, csvHorario, csvlhorario); 
-                ded.setListAulas(listAulas); // Agregamos la lista de aulas al edificio
-                listHorarios.add(ded); // Agregamos a la lista de edificios  
+                // Cerramos los archivos
+                csvAula.close();
+                csvEdificio.close();
+                csvHorario.close();
+                csvlhorario.close();
+                csvMateria.close();
+                fillBD(getCentro());
+            } else {
+                throw new IOException("Error al generar el documento."); // Crea una excepcion en caso de no generar documento
             }
-            // Cerramos los archivos
-            csvEdificio.close();
-            csvAula.close();
-            csvMateria.close();
-            csvHorario.close();
-            csvlhorario.close();
-            // Volcado de la base de datos
-            scraptobd.Tabla_edificio(new File("csv/Edificio.csv").getAbsolutePath().replace('\\', '/'));
-            scraptobd.Tabla_aula(new File("csv/Aula.csv").getAbsolutePath().replace('\\', '/'));
-            scraptobd.Tabla_materia(new File("csv/Materia.csv").getAbsolutePath().replace('\\', '/'));
-            scraptobd.Tabla_horario(new File("csv/Horario.csv").getAbsolutePath().replace('\\', '/'));
-            scraptobd.Tabla_lhorario(new File("csv/LHorario.csv").getAbsolutePath().replace('\\', '/'));
         } else {
-            throw new IOException("Error al generar el documento."); // Crea una excepcion en caso de no generar documento
+            System.out.println("El sistema ya esta actualizado");
         }
     }
 
@@ -226,6 +229,34 @@ public class SIIAU {
         return list;
     }
  
+    private boolean isExistsCSV(String centro) throws IOException{
+        
+        File fileEdif     = new File("csv/"+centro+"Edificio.csv");
+        File fileAula     = new File("csv/"+centro+"Aula.csv");
+        File fileMateria  = new File("csv/"+centro+"Materia.csv");
+        File fileHorario  = new File("csv/"+centro+"Horario.csv");
+        File fileLHorario = new File("csv/"+centro+"LHorario.csv");
+        
+        if(!fileEdif.exists() && !fileAula.exists() && !fileMateria.exists() && !fileLHorario.exists() && !fileHorario.exists()){
+            csvEdificio = new CSVWriter(new FileWriter("csv/"+centro+"Edificio.csv"), ',');
+            csvAula = new CSVWriter(new FileWriter("csv/"+centro+"Aula.csv"), ',');
+            csvMateria = new CSVWriter(new FileWriter("csv/"+centro+"Materia.csv"), ',');
+            csvHorario = new CSVWriter(new FileWriter("csv/"+centro+"Horario.csv"), ',');
+            csvlhorario = new CSVWriter(new FileWriter("csv/"+centro+"LHorario.csv"), ',');
+            return false;
+        }
+        return true;
+    }
+    
+    private void fillBD(String centro) throws SQLException{
+        // Volcado de la base de datos
+        scraptobd.Tabla_edificio(new File("csv/"+centro+"Edificio.csv").getAbsolutePath().replace('\\', '/'));
+        scraptobd.Tabla_aula(new File("csv/"+centro+"Aula.csv").getAbsolutePath().replace('\\', '/'));
+        scraptobd.Tabla_materia(new File("csv/"+centro+"Materia.csv").getAbsolutePath().replace('\\', '/'));
+        scraptobd.Tabla_horario(new File("csv/"+centro+"Horario.csv").getAbsolutePath().replace('\\', '/'));
+        scraptobd.Tabla_lhorario(new File("csv/"+centro+"LHorario.csv").getAbsolutePath().replace('\\', '/'));
+    }
+    
     /**
      * @return the _Ciclo
      */
@@ -419,7 +450,4 @@ public class SIIAU {
     public void setListHorarios(List<ScrapEdif> listHorarios) {
         this.listHorarios = listHorarios;
     }
-
-
-
 }

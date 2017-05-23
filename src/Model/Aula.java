@@ -29,7 +29,7 @@ public class Aula {
     
     @Override
     public String toString() {
-        return "Aula{" + "ID_Aula=" + ID_Aula + ", Numero=" + Numero + ", FK_Edificio=" + FK_Edificio + '}';
+        return Numero;
     }
 
     public String getID_Aula() {

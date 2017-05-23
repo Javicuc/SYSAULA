@@ -20,4 +20,5 @@ public interface iDAOManager {
     ProfesorDAO getProfesorDAO();
     SolicitudDAO getSolicitudDAO();
     UniversidadDAO getUniversidadDAO();
+    LoginDAO getLoginDAO();
 }

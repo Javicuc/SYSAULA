@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 public class ProfesorDAO implements iProfesorDAO{
     private Connection con;
     
-    final String INSERT = "INSERT INTO " + Tabla.PROFESOR + " (" + COLPROFESOR.NOMBRE + ", " + COLPROFESOR.DEPARTAMENTO + ", " + COLPROFESOR.FK_CENTRO + ") VALUES (?,?)";
+    final String INSERT = "INSERT INTO " + Tabla.PROFESOR + " (" + COLPROFESOR.NOMBRE + ", " + COLPROFESOR.DEPARTAMENTO + ", " + COLPROFESOR.FK_CENTRO + ") VALUES (?,?,?)";
     final String UPDATE = "UPDATE " + Tabla.PROFESOR + " SET " + COLPROFESOR.NOMBRE + " = ?, " +COLPROFESOR.DEPARTAMENTO +" = ?, "
                           + COLPROFESOR.FK_CENTRO + " = ? WHERE " + COLPROFESOR.ID_PROFESOR + " = ?";
     final String GETALL = "SELECT * FROM " + Tabla.PROFESOR + " ORDER BY " + COLPROFESOR.NOMBRE;

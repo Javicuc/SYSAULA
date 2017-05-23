@@ -25,11 +25,12 @@ import java.util.logging.Logger;
 public class EdificioDAO implements iEdificioDAO{
     private Connection con;
     
-    final String INSERT = "INSERT INTO " + Tabla.EDIFICIO + " (" + COLEDIFICIO.ID_NOMBRE + ", " + COLEDIFICIO.FK_UNIVERSIDAD + ") VALUES (?,?)";
+    final String INSERT = "INSERT INTO Edificio (ID_Nombre, FK_Universidad) VALUES (?, ?)";
     final String UPDATE = "UPDATE " + Tabla.EDIFICIO + " SET "+ COLEDIFICIO.ID_NOMBRE + " = ?," + COLEDIFICIO.FK_UNIVERSIDAD + " = ? "
             + "WHERE " + COLEDIFICIO.ID_NOMBRE + " = ?";
     final String GETONE = "SELECT * FROM " + Tabla.EDIFICIO + " WHERE " + COLEDIFICIO.ID_NOMBRE + " = ?";
     final String GETALL = "SELECT * FROM " + Tabla.EDIFICIO + " ORDER BY " + COLEDIFICIO.ID_NOMBRE;
+    final String GETALLID = "SELECT * FROM " + Tabla.EDIFICIO + " WHERE " + COLEDIFICIO.FK_UNIVERSIDAD + " = ? ORDER BY " + COLEDIFICIO.ID_NOMBRE;
     final String DELETE = "DELETE FROM " + Tabla.EDIFICIO + " WHERE " + COLEDIFICIO.ID_NOMBRE + " = ?";
     final String GETALLORDERBY = "SELECT * FROM " + Tabla.EDIFICIO + " ORDER BY %s";
     
@@ -131,6 +132,39 @@ public class EdificioDAO implements iEdificioDAO{
         return obj;
     }
 
+    public List<Edificio> raadAllByID(String primaryKey) throws SQLException {
+        List<Edificio> list = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = con.prepareStatement(GETALLID);
+            ps.setString(1, primaryKey);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                Edificio e = convertirRS(rs);
+                list.add(e);
+            }
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        } finally {
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new SQLException(e);
+                }
+            }
+            if(rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    throw new SQLException(e);
+                }    
+            }
+        }
+        return list;
+    }
+    
     @Override
     public boolean update(Edificio obj) throws SQLException {
         boolean actualizar = false;
@@ -197,7 +231,7 @@ public class EdificioDAO implements iEdificioDAO{
         Edificio edif = null;
         try {
             String id_edif = rs.getString(COLEDIFICIO.ID_NOMBRE);
-            String fk_univ  = rs.getString(COLEDIFICIO.FK_UNIVERSIDAD);
+            String fk_univ  = rs.getString("FK_Universidad");
             edif = new Edificio(id_edif,fk_univ);
         } catch (SQLException ex) {
             Logger.getLogger(AulaDAO.class.getName()).log(Level.SEVERE, null, ex);

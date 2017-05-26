@@ -49,15 +49,33 @@ public class ConfigLoad {
     public final static String SIIAU_MOSTRARCON = "siiauMostrar";
     
     /** Lista de Calendarios */
-    public final static String SIIAU_CALENDARIO = "siiauCalendario";
+    public final static String SIIAU_CALENDARIO = "siiauCalendarios";
     
     /** Lista de Universidades */
-    public final static String SIIAU_UNIVERSIDAD = "siiauUniversidad";
+    public final static String SIIAU_UNIVERSIDAD = "siiauUniversidades";
     
     /** Lista de Edificios Cucei*/
     public final static String SIIAU_EDIFSCUCEI = "siiauEdifsCucei";
     
    
+    public static ConfigSysAula getAllProperties(){
+        
+        ConfigLoad now = ConfigLoad.getInstance();
+        
+        ConfigSysAula configNow = new ConfigSysAula();
+        configNow.setBaseDatos(now.getProperty(DATABASE_USER));
+        configNow.setCalendario(now.getProperty(SIIAU_CALACTUAL));
+        configNow.setClave(now.getProperty(DATABASE_PSWD));
+        configNow.setMostrarRegConsulta(now.getProperty(SIIAU_MOSTRARCON));
+        configNow.setOrdenConsulta(now.getProperty(SIIAU_ORDENCON));
+        configNow.setPuerto(now.getProperty(DATABASE_PORT));
+        configNow.setServidor(now.getProperty(DATABASE_SERVER));
+        configNow.setUniversidad(now.getProperty(SIIAU_CUACTUAL));
+        configNow.setUsuario(now.getProperty(DATABASE_USER));
+        
+        return configNow;
+    }
+    
     private ConfigLoad() {
         this.properties = new Properties();
         try {

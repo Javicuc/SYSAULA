@@ -9,6 +9,7 @@ import Model.Aula;
 import Model.DAO.DAOManager;
 import Model.TablaAulas;
 import View.AulaView;
+import View.ConfigView;
 import View.EdificioView;
 import View.MainView;
 import View.ProfesorView;
@@ -18,6 +19,7 @@ import com.github.lgooddatepicker.optionalusertools.TimeChangeListener;
 import com.github.lgooddatepicker.zinternaltools.TimeChangeEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalTime;
@@ -79,7 +81,7 @@ public class MainViewController implements ActionListener{
         this.cbEdificio.setModel(new DefaultComboBoxModel(dao.getEdificioDAO().readAll().toArray()));
         this.tpHoraInicio = view.getTpHoraInicio();
         this.tpHoraFinal  = view.getTpHoraFin();
-        this.tpHoraInicio.setTimeToNow();
+        this.tpHoraInicio.setTime(LocalTime.of(LocalTime.now().getHour(), 0));
         this.tpHoraInicio.addTimeChangeListener(new TimeChangeListener() {
             @Override
             public void timeChanged(TimeChangeEvent tce) {
@@ -98,7 +100,7 @@ public class MainViewController implements ActionListener{
                     tpHoraFinal.setTime(LocalTime.of(tpHoraInicio.getTime().getHour()+1,0));
             }
         });
-        this.tpHoraFinal.setTime(LocalTime.of(this.tpHoraInicio.getTime().getHour()+1,0));
+        this.tpHoraFinal.setTime(LocalTime.of(this.tpHoraInicio.getTime().getHour()+1, 0));
         this.tpHoraFinal.addTimeChangeListener(new TimeChangeListener() {
             @Override
             public void timeChanged(TimeChangeEvent tce) {
@@ -136,11 +138,13 @@ public class MainViewController implements ActionListener{
         this.btProfesor.addActionListener(this);
         this.btSolicitar.addActionListener(this);
         this.btBuscar.addActionListener(this);
+        this.btConfig.addActionListener(this);
        
         this.aulatbModel = new HorariosTableModel(dao);
         this.aulatbModel.updateTable(this.getDia(),this.getEdif(),this.getHrI(),this.getHrF());
         this.tablaAulas = view.getTablaHorarios();
         this.tablaAulas.setModel(aulatbModel);
+        this.tablaAulas.setDefaultRenderer(Object.class, new HorariosTablaRender());
         this.tablaAulas.getColumnModel().getColumn(8).setWidth(0);
         this.tablaAulas.getColumnModel().getColumn(8).setMinWidth(0);
         this.tablaAulas.getColumnModel().getColumn(8).setMaxWidth(0); 
@@ -187,6 +191,8 @@ public class MainViewController implements ActionListener{
                 eliminarPerformed();
         } catch (SQLException ex) {
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -220,7 +226,6 @@ public class MainViewController implements ActionListener{
         aulatbModel.updateTable(getDia(),getEdif(),getHrI(),getHrF());
         aulatbModel.updateTable(aulasDisponibles);
         aulatbModel.fireTableDataChanged();
-        tablaAulas.setRowSelectionInterval(0, 0);
     }
     private void aulaPerformed() throws SQLException{
         new AulaView();
@@ -313,8 +318,8 @@ public class MainViewController implements ActionListener{
         this.aula = aula;
     }
 
-    private void configurarPerformed() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void configurarPerformed() throws IOException {
+        new ConfigView();
     }
 
     private void buscarPerformed() {

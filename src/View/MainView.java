@@ -7,8 +7,12 @@ package View;
 
 import Controller.MainViewController;
 import com.github.lgooddatepicker.components.TimePicker;
+import com.github.lgooddatepicker.components.TimePickerSettings;
+import com.github.lgooddatepicker.components.TimePickerSettings.TimeIncrement;
+import java.awt.Color;
 import java.awt.Toolkit;
 import java.sql.SQLException;
+import java.time.LocalTime;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -60,9 +64,18 @@ public class MainView extends javax.swing.JFrame {
         separador = new javax.swing.JSeparator();
         btBuscar = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        lbLogo = new javax.swing.JLabel();
-        tpHoraInicio = new com.github.lgooddatepicker.components.TimePicker();
-        tpHoraFin = new com.github.lgooddatepicker.components.TimePicker();
+        TimePickerSettings timeSettings;
+        timeSettings = new TimePickerSettings();
+        timeSettings.setAllowEmptyTimes(false);
+        timeSettings.setDisplaySpinnerButtons(true);
+        timeSettings.generatePotentialMenuTimes(TimeIncrement.OneHour, LocalTime.of(7, 00), LocalTime.of(20, 00));
+        tpHoraInicio = new com.github.lgooddatepicker.components.TimePicker(timeSettings);
+        TimePickerSettings timeSettings2;
+        timeSettings2 = new TimePickerSettings();
+        timeSettings2.setAllowEmptyTimes(false);
+        timeSettings2.setDisplaySpinnerButtons(true);
+        timeSettings2.generatePotentialMenuTimes(TimeIncrement.OneHour, LocalTime.of(8, 00), LocalTime.of(21, 00));
+        tpHoraFin = new com.github.lgooddatepicker.components.TimePicker(timeSettings2);
         ScrollTablaAulas = new javax.swing.JScrollPane();
         tablaHorarios = new javax.swing.JTable();
         lbCabeceraTabla = new javax.swing.JLabel();
@@ -226,16 +239,16 @@ public class MainView extends javax.swing.JFrame {
         lbHoraFin.setText("Hora  de finalización");
         lbHoraFin.setForeground(new java.awt.Color(8, 47, 107));
 
+        btBuscar.setBackground(new java.awt.Color(233, 30, 99));
+        btBuscar.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        btBuscar.setForeground(new java.awt.Color(255, 255, 255));
         btBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/botones/buttonPal110x26.png"))); // NOI18N
         btBuscar.setText("Buscar");
         btBuscar.setAlignmentY(0.0F);
-        btBuscar.setBackground(new java.awt.Color(233, 30, 99));
         btBuscar.setBorder(null);
         btBuscar.setBorderPainted(false);
         btBuscar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btBuscar.setFocusPainted(false);
-        btBuscar.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        btBuscar.setForeground(new java.awt.Color(255, 255, 255));
         btBuscar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btBuscar.setIconTextGap(0);
         btBuscar.setMaximumSize(new java.awt.Dimension(120, 26));
@@ -248,21 +261,15 @@ public class MainView extends javax.swing.JFrame {
         jPanel1.setMinimumSize(new java.awt.Dimension(135, 80));
         jPanel1.setPreferredSize(new java.awt.Dimension(135, 80));
 
-        lbLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbLogo.setText("Logo 40px");
-        lbLogo.setPreferredSize(new java.awt.Dimension(80, 80));
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lbLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(0, 200, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(lbLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout PanelBusquedaLayout = new javax.swing.GroupLayout(PanelBusqueda);
@@ -309,10 +316,10 @@ public class MainView extends javax.swing.JFrame {
                 .addComponent(tpHoraFin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(16, 16, 16)
                 .addComponent(separador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                 .addComponent(btBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         PanelBusquedaLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {cbDia, cbEdificio});
@@ -400,7 +407,7 @@ public class MainView extends javax.swing.JFrame {
         tablaHorarios.setForeground(new java.awt.Color(21, 101, 192));
         tablaHorarios.setGridColor(new java.awt.Color(245, 245, 245));
         tablaHorarios.setName(""); // NOI18N
-        tablaHorarios.setRowHeight(20);
+        tablaHorarios.setRowHeight(40);
         tablaHorarios.setSelectionBackground(new java.awt.Color(187, 222, 251));
         tablaHorarios.setSelectionForeground(new java.awt.Color(102, 102, 255));
         ScrollTablaAulas.setViewportView(tablaHorarios);
@@ -495,7 +502,6 @@ public class MainView extends javax.swing.JFrame {
     private javax.swing.JLabel lbEdificio;
     private javax.swing.JLabel lbHoraFin;
     private javax.swing.JLabel lbHoraInicio;
-    private javax.swing.JLabel lbLogo;
     private javax.swing.JLabel lbNombreAplicacion;
     private javax.swing.JSeparator separador;
     private javax.swing.JTable tablaHorarios;

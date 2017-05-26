@@ -1,11 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Controller;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.sql.Time;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -18,12 +16,23 @@ public class HorariosTablaRender extends DefaultTableCellRenderer{
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
-        if(value instanceof Byte){
-            value  = (Byte)value;
+        JLabel cellComponent = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        
+        if(value instanceof Boolean){
+            value  = (Boolean)value;
+            if(column == 7){
+                if(value.equals(true)){
+                    cellComponent.setText("DISPONIBLE");
+                    cellComponent.setForeground(Color.GREEN);
+                }else{
+                    cellComponent.setText("OCUPADO");
+                    cellComponent.setForeground(Color.RED);
+                }
+            }
         }
+        if(value instanceof String || value instanceof Integer || value instanceof Time)
+            cellComponent.setForeground(new java.awt.Color(102, 102, 255));
         
-        
-        return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); //To change body of generated methods, choose Tools | Templates.
+        return cellComponent;
     }
-    
 }

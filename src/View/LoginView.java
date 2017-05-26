@@ -7,9 +7,6 @@ package View;
 
 import SQL.BD_Conexion;
 import com.sun.awt.AWTUtilities;
-import java.awt.Color;
-import java.awt.MouseInfo;
-import java.awt.Point;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,13 +21,14 @@ import javax.swing.JOptionPane;
  */
 public class LoginView extends javax.swing.JFrame {
 
-    /**
-     * Creates new form login
-     */
+    private int x;
+    private int y;
+    
     public LoginView() {
         initComponents();
         this.setLocationRelativeTo(null);
-        //AWTUtilities.setWindowOpaque(this, false);
+        AWTUtilities.setWindowOpaque(this, false);
+        this.setVisible(true);
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -56,6 +54,7 @@ public class LoginView extends javax.swing.JFrame {
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/imagenes/calendario.png"))); // NOI18N
         jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 106, 390, 176));
 
@@ -77,47 +76,55 @@ public class LoginView extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/30px/salir.png"))); // NOI18N
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/50px/salir_boton.jpg"))); // NOI18N
+        jButton1.setBackground(new java.awt.Color(51, 51, 51));
         jButton1.setBorder(null);
         jButton1.setContentAreaFilled(false);
+        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jButton1.setFocusable(false);
-        jButton1.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/30px/salir_pressed.png"))); // NOI18N
-        jButton1.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/30px/salir_rollover.png"))); // NOI18N
+        jButton1.setForeground(new java.awt.Color(0, 0, 0));
+        jButton1.setOpaque(true);
+        jButton1.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/50px/salir_pressed.jpg"))); // NOI18N
+        jButton1.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/50px/salir_rollover.jpg"))); // NOI18N
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButton1MouseClicked(evt);
             }
         });
 
+        jLabel1.setText("Usuario");
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(8, 47, 107));
-        jLabel1.setText("Usuario");
 
         tfUsuario.setBackground(new java.awt.Color(236, 246, 253));
-        tfUsuario.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         tfUsuario.setBorder(null);
+        tfUsuario.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         tfUsuario.setOpaque(false);
 
         jSeparator1.setForeground(new java.awt.Color(8, 47, 107));
 
+        jLabel5.setText("Contraseña");
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(8, 47, 107));
-        jLabel5.setText("Contraseña");
 
+        tfClave.setBorder(null);
         tfClave.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         tfClave.setForeground(new java.awt.Color(0, 4, 9));
-        tfClave.setText("jPasswordField1");
-        tfClave.setBorder(null);
         tfClave.setOpaque(false);
 
         jSeparator2.setForeground(new java.awt.Color(8, 47, 107));
 
-        jButton2.setFont(jButton2.getFont().deriveFont(jButton2.getFont().getStyle() | java.awt.Font.BOLD));
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/botones/buttonPal110x26.png"))); // NOI18N
         jButton2.setText("Ingresar");
+        jButton2.setBackground(new java.awt.Color(233, 30, 99));
         jButton2.setBorder(null);
-        jButton2.setContentAreaFilled(false);
+        jButton2.setBorderPainted(false);
+        jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton2.setDefaultCapable(false);
+        jButton2.setFocusPainted(false);
+        jButton2.setFocusable(false);
+        jButton2.setFont(jButton2.getFont().deriveFont(jButton2.getFont().getStyle() | java.awt.Font.BOLD));
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -131,26 +138,25 @@ public class LoginView extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jButton1))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(80, 80, 80)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(tfUsuario)
-                    .addComponent(jSeparator1)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(tfClave, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
-                    .addComponent(jSeparator2)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(60, 60, 60)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(tfUsuario)
+                        .addComponent(jSeparator1)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tfClave, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                        .addComponent(jSeparator2)))
                 .addContainerGap(80, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(80, 80, 80)
+                .addComponent(jButton1)
+                .addGap(59, 59, 59)
                 .addComponent(jLabel1)
                 .addGap(5, 5, 5)
                 .addComponent(tfUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -174,8 +180,7 @@ public class LoginView extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    private int x;
-    private int y;
+    
     
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         System.exit(0);
@@ -197,18 +202,20 @@ public class LoginView extends javax.swing.JFrame {
         ResultSet rs = null;
         Connection con = BD_Conexion.getInstance();
         try {
+            System.out.println(tfUsuario.getText() + " : " + tfClave.getPassword().toString());
             ps = con.prepareStatement(login);
             ps.setString(1,tfUsuario.getText());
-            ps.setString(2, tfClave.getPassword().toString());
+            ps.setString(2, tfClave.getText());
             rs = ps.executeQuery();
-            if(rs.next())
+            if(rs.next()){
                 new MainView();
+                this.dispose();
+            }
             else
                 JOptionPane.showMessageDialog(null, "Usuario o Clave incorrectos", "Error!", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException ex) {
             Logger.getLogger(LoginView.class.getName()).log(Level.SEVERE, null, ex);
         }
-        dispose();
     }//GEN-LAST:event_jButton2MouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

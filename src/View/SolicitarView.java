@@ -82,7 +82,7 @@ public class SolicitarView extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setAlwaysOnTop(true);
         setResizable(false);
-        getContentPane().setLayout(new java.awt.CardLayout());
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         fondo.setBackground(new java.awt.Color(255, 255, 255));
         fondo.setMinimumSize(new java.awt.Dimension(400, 450));
@@ -199,7 +199,7 @@ public class SolicitarView extends javax.swing.JFrame {
         lineaProf.setForeground(new java.awt.Color(8, 47, 107));
         fondo.add(lineaProf, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 102, 360, -1));
 
-        getContentPane().add(fondo, "card2");
+        getContentPane().add(fondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 518));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -229,11 +229,11 @@ public class SolicitarView extends javax.swing.JFrame {
                 jv.setVisible(true);
                 jv.setTitle("Solicitud-Aula");
             } catch (JRException ex) {
-                Logger.getLogger(SolicitudView.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SolicitarView.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
-                Logger.getLogger(SolicitudView.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SolicitarView.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SQLException ex) {
-                Logger.getLogger(SolicitudView.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SolicitarView.class.getName()).log(Level.SEVERE, null, ex);
             }
             dispose();
         }

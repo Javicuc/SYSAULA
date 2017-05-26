@@ -8,7 +8,6 @@ import Scraping.SIIAU;
 import Scraping.initScrapping;
 import View.LoginView;
 import View.MainView;
-import View.MainView2;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;

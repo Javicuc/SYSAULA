@@ -5,8 +5,6 @@ import Data.ConfigLoad;
 import Data.ConfigSysAula;
 import Data.ConfigWrite;
 import Scraping.SIIAU;
-import Scraping.initScrapping;
-import View.LoginView;
 import View.MainView;
 import java.io.IOException;
 import java.sql.SQLException;

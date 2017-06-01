@@ -63,7 +63,7 @@ public class ConfigLoad {
         ConfigLoad now = ConfigLoad.getInstance();
         
         ConfigSysAula configNow = new ConfigSysAula();
-        configNow.setBaseDatos(now.getProperty(DATABASE_USER));
+        configNow.setBaseDatos(now.getProperty(DATABASE_CATALOG));
         configNow.setCalendario(now.getProperty(SIIAU_CALACTUAL));
         configNow.setClave(now.getProperty(DATABASE_PSWD));
         configNow.setMostrarRegConsulta(now.getProperty(SIIAU_MOSTRARCON));

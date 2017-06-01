@@ -17,7 +17,7 @@ public class HorariosTablaRender extends DefaultTableCellRenderer{
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         
         JLabel cellComponent = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        
+        cellComponent.setHorizontalAlignment(CENTER);
         if(value instanceof Boolean){
             value  = (Boolean)value;
             if(column == 7){
@@ -29,8 +29,7 @@ public class HorariosTablaRender extends DefaultTableCellRenderer{
                     cellComponent.setForeground(Color.RED);
                 }
             }
-        }
-        if(value instanceof String || value instanceof Integer || value instanceof Time)
+        }else
             cellComponent.setForeground(new java.awt.Color(102, 102, 255));
         
         return cellComponent;

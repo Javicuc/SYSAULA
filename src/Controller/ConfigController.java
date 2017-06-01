@@ -14,12 +14,9 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 
 /**
  *
@@ -57,6 +54,7 @@ public class ConfigController implements ActionListener{
         
         getConfigActual();
         System.out.println(objConfigSysDefault);
+        saveTextFields();
     }
 
     public ConfigSysAula getObjConfigSysDefault() {
@@ -76,12 +74,20 @@ public class ConfigController implements ActionListener{
         
         this.listCentros = Arrays.asList(ConfigLoad.getInstance().getProperty(ConfigLoad.SIIAU_UNIVERSIDAD).split(","));
         this.cbUniversidad.setModel(new DefaultComboBoxModel(this.listCentros.toArray()));
-        this.cbUniversidad.setSelectedIndex(4);
+        
+        
+        for(int i = 0; i < this.listCentros.size(); i++)
+            if(this.listCentros.get(i).matches(objConfigSysDefault.getUniversidad() + ".*"))
+                this.cbUniversidad.setSelectedIndex(i);
         
         this.listCalendarios = Arrays.asList(ConfigLoad.getInstance().getProperty(ConfigLoad.SIIAU_CALENDARIO).split(","));
         this.cbCalendario.setModel(new DefaultComboBoxModel(this.listCalendarios.toArray()));
-        this.cbCalendario.setSelectedIndex(4);
                 
+         for(int i = 0 ; i < this.listCalendarios.size(); i++)
+            if(this.listCalendarios.get(i).matches(objConfigSysDefault.getCalendario() + ".*"))
+                this.cbCalendario.setSelectedIndex(i);
+        
+        
         view.getTfUsuario().setText(getObjConfigSysDefault().getUsuario());
         view.getTfBaseDatos().setText(getObjConfigSysDefault().getBaseDatos());
         view.getTfPuerto().setText(getObjConfigSysDefault().getPuerto());
@@ -93,6 +99,15 @@ public class ConfigController implements ActionListener{
     }
     
     public void saveTextFields(){
+        String nombreBD = view.getTfBaseDatos().getText();
+        String usuario  = view.getTfUsuario().getText();
+        String puerto   = view.getTfPuerto().getText();
+        String clave    = new String(view.getPfPassword().getPassword());
+        String servidor = view.getTfServidor().getText();
+        String cuSelect = cbUniversidad.getSelectedItem().toString();
+        String caSelect = cbCalendario.getSelectedItem().toString();
         
+        System.out.println("Base de datos: " + nombreBD + ", Usuario: " + usuario + ", Clave: " + clave + ", Servidor: " + servidor 
+                + ", Puerto: " + puerto + ", cuSelect: " + cuSelect + ", caSelect: " + caSelect);
     }
 }

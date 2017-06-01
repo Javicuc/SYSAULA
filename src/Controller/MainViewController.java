@@ -100,7 +100,7 @@ public class MainViewController implements ActionListener{
                     tpHoraFinal.setTime(LocalTime.of(tpHoraInicio.getTime().getHour()+1,0));
             }
         });
-        this.tpHoraFinal.setTime(LocalTime.of(this.tpHoraInicio.getTime().getHour()+1, 0));
+        this.tpHoraFinal.setTime(LocalTime.of(( (this.tpHoraInicio.getTime().getHour()+1 > 23)) ? 0 : 23, 0));
         this.tpHoraFinal.addTimeChangeListener(new TimeChangeListener() {
             @Override
             public void timeChanged(TimeChangeEvent tce) {

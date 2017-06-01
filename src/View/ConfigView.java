@@ -418,16 +418,12 @@ public class ConfigView extends javax.swing.JFrame {
             cbCalendario.setEnabled(true);
             cbUniversidad.setEnabled(true);
             tfUniversidadActual.setEnabled(true);
-            tfUniversidadActual.setEditable(true);
             tfCalendarioActual.setEnabled(true);
-            tfCalendarioActual.setEditable(true);
         }else{
             cbCalendario.setEnabled(false);
             cbUniversidad.setEnabled(false);
             tfUniversidadActual.setEnabled(false);
-            tfUniversidadActual.setEditable(false);
             tfCalendarioActual.setEnabled(false);
-            tfCalendarioActual.setEditable(false);
         }
     }//GEN-LAST:event_cbSysAulaActionPerformed
 
